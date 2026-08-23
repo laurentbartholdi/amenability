@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
 import Amenability.CodimOneCoalgebraStep
+import Amenability.CompleteSubcoalgebraFlag
 
 /-!
 # Primal transfer along complete subcoalgebra flags
@@ -128,17 +129,6 @@ theorem codimOne_transfer_step_ambient
       (stepUDenominator A' A C U Dint),
     ambientImage_stepUDenominator A' A C hAA U D hDle] at hstep
   exact hstep
-
-/-- A complete flag of finite subcoalgebras, expressed recursively so that
-successive codimension-one transfer steps require no index bookkeeping. -/
-inductive HasCompleteSubcoalgebraFlag : FiniteSubcoalgebra k H → Prop
-  | bot {A : FiniteSubcoalgebra k H} (hA : A.carrier = ⊥) :
-      HasCompleteSubcoalgebraFlag A
-  | step {A' A : FiniteSubcoalgebra k H}
-      (hflag : HasCompleteSubcoalgebraFlag A')
-      (hAA : A'.carrier ≤ A.carrier)
-      (hdim : finrank k A.carrier = finrank k A'.carrier + 1) :
-      HasCompleteSubcoalgebraFlag A
 
 /-- The primal transfer inequality along a complete subcoalgebra flag, with
 the comparison subcoalgebra living in the ambient Hopf algebra. -/
