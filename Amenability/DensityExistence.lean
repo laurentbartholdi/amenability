@@ -238,10 +238,10 @@ theorem densitySubspace_isLargestMaximizer [FiniteDimensional k V]
       (densitySubspace 𝓛 E t ⊔ D) :=
     hC.sup hD
   have hdim :
-      finrank k (densitySubspace 𝓛 E t ⊔ D : Submodule k V) ≤
+      sfinrank k (densitySubspace 𝓛 E t ⊔ D) ≤
         finrank k (densitySubspace 𝓛 E t) := by
     calc
-      finrank k (densitySubspace 𝓛 E t ⊔ D : Submodule k V)
+      sfinrank k (densitySubspace 𝓛 E t ⊔ D)
           ≤ maximalDensityDimension 𝓛 E t :=
             finrank_le_maximalDensityDimension 𝓛 E t hsup
       _ = finrank k (densitySubspace 𝓛 E t) :=

@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
 
+import Amenability.SubmoduleFinrank
 import Mathlib
 
 /-!
@@ -44,7 +45,7 @@ variable {k V}
 /-- The rank term `dim(E ∩ C)`. -/
 noncomputable def intersectionRank
     (E C : Submodule k V) : ℕ :=
-  finrank k (E ⊓ C : Submodule k V)
+  sfinrank k (E ⊓ C)
 
 /--
 The density-filtration score
@@ -67,8 +68,8 @@ theorem intersectionRank_supermodular [FiniteDimensional k V]
       (le_inf inf_le_left (inf_le_right.trans le_sup_left))
       (le_inf inf_le_left (inf_le_right.trans le_sup_right))
   have hdim_sup :
-      finrank k ((E ⊓ C : Submodule k V) ⊔ (E ⊓ D : Submodule k V) : Submodule k V)
-        ≤ finrank k (E ⊓ (C ⊔ D : Submodule k V) : Submodule k V) :=
+      sfinrank k ((E ⊓ C) ⊔ (E ⊓ D)) ≤
+        sfinrank k (E ⊓ (C ⊔ D)) :=
     Submodule.finrank_mono hsup
   have hmod :=
     Submodule.finrank_sup_add_finrank_inf_eq (E ⊓ C) (E ⊓ D)
@@ -76,7 +77,7 @@ theorem intersectionRank_supermodular [FiniteDimensional k V]
       (E ⊓ C) ⊓ (E ⊓ D) = E ⊓ (C ⊓ D) := by
     simp [inf_left_comm, inf_comm]
   rw [hinf] at hmod
-  unfold intersectionRank
+  simp only [intersectionRank, sfinrank] at *
   omega
 
 /--
@@ -94,7 +95,7 @@ theorem densityScore_supermodular [FiniteDimensional k V]
     exact_mod_cast hrNat
   have hdNat := Submodule.finrank_sup_add_finrank_inf_eq C D
   have hd :
-      (finrank k (C ⊔ D : Submodule k V) : ℚ) + (finrank k (C ⊓ D : Submodule k V) : ℚ) =
+      (sfinrank k (C ⊔ D) : ℚ) + (sfinrank k (C ⊓ D) : ℚ) =
         (finrank k C : ℚ) + (finrank k D : ℚ) := by
     exact_mod_cast hdNat
   calc
@@ -107,8 +108,8 @@ theorem densityScore_supermodular [FiniteDimensional k V]
           t * ((finrank k C : ℚ) + (finrank k D : ℚ)) := by
           nlinarith [hr]
     _ = ((intersectionRank E (C ⊔ D) : ℚ) + (intersectionRank E (C ⊓ D) : ℚ)) -
-          t * ((finrank k (C ⊔ D : Submodule k V) : ℚ) +
-            (finrank k (C ⊓ D : Submodule k V) : ℚ)) := by
+          t * ((sfinrank k (C ⊔ D) : ℚ) +
+            (sfinrank k (C ⊓ D) : ℚ)) := by
           rw [hd]
     _ = densityScore E t (C ⊔ D) + densityScore E t (C ⊓ D) := by
           unfold densityScore
@@ -218,7 +219,7 @@ theorem largestDensityMaximizer_antitone [FiniteDimensional k V]
       (finrank k S : ℚ) + (finrank k I : ℚ) =
         (finrank k Cs : ℚ) + (finrank k Ct : ℚ) := by
     simpa [S, I] using (show
-      (finrank k (Cs ⊔ Ct : Submodule k V) : ℚ) + (finrank k (Cs ⊓ Ct : Submodule k V) : ℚ) =
+      (sfinrank k (Cs ⊔ Ct) : ℚ) + (sfinrank k (Cs ⊓ Ct) : ℚ) =
         (finrank k Cs : ℚ) + (finrank k Ct : ℚ) by
       exact_mod_cast hdNat)
   have hIleNat : finrank k I ≤ finrank k Ct := by

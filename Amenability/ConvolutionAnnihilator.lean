@@ -102,7 +102,7 @@ theorem convDualAnnihilator_difference
           (convDualAnnihilator B ⊓ convDualAnnihilator U :
             Submodule k (WithConv (Module.Dual k C))) : ℚ) =
       (finrank k U : ℚ) -
-        (finrank k (U ⊓ B : Submodule k C) : ℚ) := by
+        (sfinrank k (U ⊓ B) : ℚ) := by
   rw [finrank_convDualAnnihilator B,
     finrank_inf_convDualAnnihilator B U]
   exact dualAnnihilator_difference U B
@@ -116,7 +116,7 @@ theorem semistable_to_convDualAnnihilator
     (hsem :
       t * ((finrank k C : ℚ) - (finrank k B : ℚ)) ≤
         (finrank k U : ℚ) -
-          (finrank k (U ⊓ B : Submodule k C) : ℚ)) :
+          (sfinrank k (U ⊓ B) : ℚ)) :
     t * (finrank k (convDualAnnihilator B) : ℚ) ≤
       (finrank k (convDualAnnihilator B) : ℚ) -
         (finrank k
@@ -188,7 +188,7 @@ theorem convDualAnnihilator_isIdealSubspace
     (B : Submodule k C)
     (hB : IsSubcoalgebra (k := k) B) :
     IsIdealSubspace (convDualAnnihilator B) := by
-  letI := subcoalgebraCoalgebra B hB
+  let : Coalgebra k B := subcoalgebraCoalgebra B hB
   let f :
       WithConv (Module.Dual k C) →ₐ[k]
         WithConv (Module.Dual k B) :=

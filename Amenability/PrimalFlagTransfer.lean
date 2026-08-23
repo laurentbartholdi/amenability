@@ -101,9 +101,9 @@ theorem codimOne_transfer_step_ambient
       IsSubcoalgebra (k := k) B →
       t * ((finrank k C.carrier : ℚ) - finrank k B) ≤
         (finrank k U : ℚ) -
-          finrank k (U ⊓ B : Submodule k C.carrier)) :
+          sfinrank k (U ⊓ B)) :
     t * ((finrank k (A.carrier * C.carrier) : ℚ) -
-        finrank k (D ⊔ (A'.carrier * C.carrier) : Submodule k H)) ≤
+        sfinrank k (D ⊔ (A'.carrier * C.carrier))) ≤
       (finrank k (D ⊔
         (A.carrier * ambientImage C.carrier U) : Submodule k H) : ℚ) -
         finrank k (D ⊔
@@ -154,7 +154,7 @@ theorem transfer_of_completeFlag_ambient
       IsSubcoalgebra (k := k) B →
       t * ((finrank k C.carrier : ℚ) - finrank k B) ≤
         (finrank k U : ℚ) -
-          finrank k (U ⊓ B : Submodule k C.carrier)) :
+          sfinrank k (U ⊓ B)) :
     t * ((finrank k (A.carrier * C.carrier) : ℚ) - finrank k D) ≤
       (finrank k (A.carrier * ambientImage C.carrier U) : ℚ) -
         finrank k ((A.carrier * ambientImage C.carrier U) ⊓ D :
@@ -189,15 +189,14 @@ theorem transfer_of_completeFlag_ambient
         A' A0 C hAA hdim U D hDle hD t hsem
       have hleftNat := Submodule.finrank_sup_add_finrank_inf_eq D AC'
       have hleftQ :
-          (finrank k (D ⊔ AC' : Submodule k H) : ℚ) +
-              finrank k (D ⊓ AC' : Submodule k H) =
+          (sfinrank k (D ⊔ AC') : ℚ) + sfinrank k (D ⊓ AC') =
             finrank k D + finrank k AC' := by
         exact_mod_cast hleftNat
       have hleft :
           ((finrank k (A0.carrier * C.carrier) : ℚ) -
-              finrank k (D ⊔ AC' : Submodule k H)) +
+              sfinrank k (D ⊔ AC')) +
             ((finrank k AC' : ℚ) -
-              finrank k (D ⊓ AC' : Submodule k H)) =
+              sfinrank k (D ⊓ AC')) =
           (finrank k (A0.carrier * C.carrier) : ℚ) - finrank k D := by
         linarith
       have hUambient : ambientImage C.carrier U ≤ C.carrier := by
@@ -229,27 +228,24 @@ theorem transfer_of_completeFlag_ambient
       have hmodUNat := Submodule.finrank_sup_add_finrank_inf_eq D AU
       have hmodU'Nat := Submodule.finrank_sup_add_finrank_inf_eq D AU'
       have hmodU :
-          (finrank k (D ⊔ AU : Submodule k H) : ℚ) +
-              finrank k (D ⊓ AU : Submodule k H) =
+          (sfinrank k (D ⊔ AU) : ℚ) + sfinrank k (D ⊓ AU) =
             finrank k D + finrank k AU := by
         exact_mod_cast hmodUNat
       have hmodU' :
-          (finrank k (D ⊔ AU' : Submodule k H) : ℚ) +
-              finrank k (D ⊓ AU' : Submodule k H) =
+          (sfinrank k (D ⊔ AU') : ℚ) + sfinrank k (D ⊓ AU') =
             finrank k D + finrank k AU' := by
         exact_mod_cast hmodU'Nat
       have hinfComm : D ⊓ AU = AU ⊓ D := inf_comm D AU
       have hinfComm' : D ⊓ AU' = AU' ⊓ D := inf_comm D AU'
       have hright :
-          ((finrank k (D ⊔ AU : Submodule k H) : ℚ) -
-              finrank k (D ⊔ AU' : Submodule k H)) +
+          ((sfinrank k (D ⊔ AU) : ℚ) - sfinrank k (D ⊔ AU')) +
             ((finrank k AU' : ℚ) -
-              finrank k (AU' ⊓ (D ⊓ AC') : Submodule k H)) =
-          (finrank k AU : ℚ) - finrank k (AU ⊓ D : Submodule k H) := by
+              sfinrank k (AU' ⊓ (D ⊓ AC'))) =
+          (finrank k AU : ℚ) - sfinrank k (AU ⊓ D) := by
         rw [hinter, ← hinfComm, ← hinfComm']
         linarith
       change t * ((finrank k (A0.carrier * C.carrier) : ℚ) - finrank k D) ≤
-        (finrank k AU : ℚ) - finrank k (AU ⊓ D : Submodule k H)
+        (finrank k AU : ℚ) - sfinrank k (AU ⊓ D)
       rw [← hleft, ← hright]
       rw [mul_add]
       exact add_le_add hstep (by simpa [AC', AU', D'] using hprev)
@@ -266,7 +262,7 @@ theorem transfer_of_completeFlag
       IsSubcoalgebra (k := k) B →
       t * ((finrank k C.carrier : ℚ) - finrank k B) ≤
         (finrank k U : ℚ) -
-          finrank k (U ⊓ B : Submodule k C.carrier)) :
+          sfinrank k (U ⊓ B)) :
     t * ((finrank k (FiniteSubcoalgebra.mul A C).carrier : ℚ) -
         finrank k D) ≤
       (finrank k (leftProductSubspace A C U) : ℚ) -

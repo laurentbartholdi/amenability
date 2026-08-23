@@ -5,6 +5,7 @@ Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
 import Amenability.TransferDimensions
 import Amenability.UnifiedRoundingCore
+import Amenability.SubmoduleFinrank
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.LinearAlgebra.Dimension.Finrank
 
@@ -215,7 +216,7 @@ theorem filtered_transfer_finrank
         IsIdealSubspace M →
           t * (finrank k M : ℚ) ≤
             (finrank k M : ℚ) -
-              (finrank k (M ⊓ K : Submodule k A) : ℚ)) :
+              (sfinrank k (M ⊓ K) : ℚ)) :
     t * (finrank k J : ℚ) ≤
       (finrank k J : ℚ) - (finrank k N : ℚ) := by
   let cert : LayerCertificate (Fin T.n) :=
@@ -223,14 +224,14 @@ theorem filtered_transfer_finrank
       dimJ := finrank k J
       dimN := finrank k N
       jLayer := fun i => finrank k (T.layerImage J i)
-      nLayer := fun i => finrank k (T.layerImage J i ⊓ K : Submodule k A)
+      nLayer := fun i => sfinrank k (T.layerImage J i ⊓ K)
       dimJ_eq := by
         exact_mod_cast T.finrank_eq_sum_layerImage J
       dimN_le := by
         have hnat :
             finrank k N ≤
               ∑ i : Fin T.n,
-                finrank k (T.layerImage J i ⊓ K : Submodule k A) := by
+                sfinrank k (T.layerImage J i ⊓ K) := by
           rw [T.finrank_eq_sum_layerImage N]
           exact Finset.sum_le_sum fun i _ =>
             Submodule.finrank_mono

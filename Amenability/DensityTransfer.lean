@@ -48,7 +48,7 @@ theorem finrank_sub_inf_le_intersectionRank_sub
     (hUC : U ≤ C)
     (hBC : B ≤ C) :
     (finrank k U : ℚ) -
-        (finrank k (U ⊓ B : Submodule k V) : ℚ) ≤
+        (sfinrank k (U ⊓ B) : ℚ) ≤
       (intersectionRank E C : ℚ) -
         (intersectionRank E B : ℚ) := by
   let X : Submodule k V := E ⊓ C
@@ -58,17 +58,17 @@ theorem finrank_sub_inf_le_intersectionRank_sub
     exact le_inf inf_le_left (inf_le_right.trans hBC)
   have hsup : U ⊔ Y ≤ X := sup_le hUX hYX
   have hsupNat :
-      finrank k (U ⊔ Y : Submodule k V) ≤ finrank k X :=
+      sfinrank k (U ⊔ Y) ≤ finrank k X :=
     Submodule.finrank_mono hsup
   have hsupQ :
-      (finrank k (U ⊔ Y : Submodule k V) : ℚ) ≤
+      (sfinrank k (U ⊔ Y) : ℚ) ≤
         (finrank k X : ℚ) := by
     exact_mod_cast hsupNat
   have hmodNat :=
     Submodule.finrank_sup_add_finrank_inf_eq U Y
   have hmodQ :
-      (finrank k (U ⊔ Y : Submodule k V) : ℚ) +
-          (finrank k (U ⊓ Y : Submodule k V) : ℚ) =
+      (sfinrank k (U ⊔ Y) : ℚ) +
+          (sfinrank k (U ⊓ Y) : ℚ) =
         (finrank k U : ℚ) + (finrank k Y : ℚ) := by
     exact_mod_cast hmodNat
   have hUY :
@@ -79,7 +79,7 @@ theorem finrank_sub_inf_le_intersectionRank_sub
       exact le_inf (inf_le_left.trans hUE) inf_le_right
   change
     (finrank k U : ℚ) -
-        (finrank k (U ⊓ B : Submodule k V) : ℚ) ≤
+        (sfinrank k (U ⊓ B) : ℚ) ≤
       (finrank k X : ℚ) - (finrank k Y : ℚ)
   rw [← hUY]
   linarith
@@ -98,16 +98,16 @@ theorem le_of_transfer_to_largestDensityMaximizer
     (hUC : U ≤ C)
     (htransfer :
       t * ((finrank k C : ℚ) -
-        (finrank k (C ⊓ D : Submodule k V) : ℚ)) ≤
+        (sfinrank k (C ⊓ D) : ℚ)) ≤
       (finrank k U : ℚ) -
-        (finrank k (U ⊓ (C ⊓ D) : Submodule k V) : ℚ)) :
+        (sfinrank k (U ⊓ (C ⊓ D)) : ℚ)) :
     C ≤ D := by
   let B : Submodule k V := C ⊓ D
   have hB : 𝓛.admissible B := by
     exact 𝓛.inf_admissible hC hD.1.1
   have hcodim :
       (finrank k U : ℚ) -
-          (finrank k (U ⊓ B : Submodule k V) : ℚ) ≤
+          (sfinrank k (U ⊓ B) : ℚ) ≤
         (intersectionRank E C : ℚ) -
           (intersectionRank E B : ℚ) := by
     exact finrank_sub_inf_le_intersectionRank_sub

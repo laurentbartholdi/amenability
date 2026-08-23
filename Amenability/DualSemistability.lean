@@ -41,7 +41,7 @@ theorem dualAnnihilator_difference
           (B.dualAnnihilator ⊓ U.dualAnnihilator :
             Submodule k (Module.Dual k V)) : ℚ) =
       (finrank k U : ℚ) -
-        (finrank k (U ⊓ B : Submodule k V) : ℚ) := by
+        (sfinrank k (U ⊓ B) : ℚ) := by
   have hBnat :=
     Subspace.finrank_add_finrank_dualAnnihilator_eq B
   have hBUnat :=
@@ -55,19 +55,19 @@ theorem dualAnnihilator_difference
         (finrank k V : ℚ) := by
     exact_mod_cast hBnat
   have hBU :
-      (finrank k (B ⊔ U : Submodule k V) : ℚ) +
+      (sfinrank k (B ⊔ U) : ℚ) +
           (finrank k
             (B ⊔ U : Submodule k V).dualAnnihilator : ℚ) =
         (finrank k V : ℚ) := by
     exact_mod_cast hBUnat
   have hmod' :
-      (finrank k (B ⊔ U : Submodule k V) : ℚ) +
-          (finrank k (B ⊓ U : Submodule k V) : ℚ) =
+      (sfinrank k (B ⊔ U) : ℚ) +
+          (sfinrank k (B ⊓ U) : ℚ) =
         (finrank k B : ℚ) + (finrank k U : ℚ) := by
     exact_mod_cast hmodnat
   have hmod :
-      (finrank k (B ⊔ U : Submodule k V) : ℚ) +
-          (finrank k (U ⊓ B : Submodule k V) : ℚ) =
+      (sfinrank k (B ⊔ U) : ℚ) +
+          (sfinrank k (U ⊓ B) : ℚ) =
         (finrank k B : ℚ) + (finrank k U : ℚ) := by
     rw [inf_comm U B]
     exact hmod'
@@ -89,7 +89,7 @@ theorem semistable_to_dualAnnihilator
     (hsem :
       t * ((finrank k V : ℚ) - (finrank k B : ℚ)) ≤
         (finrank k U : ℚ) -
-          (finrank k (U ⊓ B : Submodule k V) : ℚ)) :
+          (sfinrank k (U ⊓ B) : ℚ)) :
     t * (finrank k B.dualAnnihilator : ℚ) ≤
       (finrank k B.dualAnnihilator : ℚ) -
         (finrank k

@@ -55,7 +55,7 @@ theorem semistable_all_conv_ideals
         IsSubcoalgebra (k := k) B →
           t * ((finrank k C : ℚ) - (finrank k B : ℚ)) ≤
             (finrank k U : ℚ) -
-              (finrank k (U ⊓ B : Submodule k C) : ℚ)) :
+              (sfinrank k (U ⊓ B) : ℚ)) :
     ∀ M : Submodule k (WithConv (Module.Dual k C)),
       IsIdealSubspace M →
         t * (finrank k M : ℚ) ≤
@@ -100,7 +100,7 @@ theorem coalgebra_transfer
         IsSubcoalgebra (k := k) B →
           t * ((finrank k C : ℚ) - (finrank k B : ℚ)) ≤
             (finrank k U : ℚ) -
-              (finrank k (U ⊓ B : Submodule k C) : ℚ))
+              (sfinrank k (U ⊓ B) : ℚ))
     (hbad :
       ∀ i : Fin T.n,
         T.layerImage
@@ -108,12 +108,12 @@ theorem coalgebra_transfer
           convDualAnnihilator U) :
     t * ((finrank k V : ℚ) - (finrank k D : ℚ)) ≤
       (finrank k W : ℚ) -
-        (finrank k (W ⊓ D : Submodule k V) : ℚ) := by
-  letI : FiniteDimensional k (WithConv (Module.Dual k V)) :=
+        (sfinrank k (W ⊓ D) : ℚ) := by
+  let : FiniteDimensional k (WithConv (Module.Dual k V)) :=
     FiniteDimensional.of_injective
       (WithConv.linearEquiv k (Module.Dual k V)).toLinearMap
       (WithConv.linearEquiv k (Module.Dual k V)).injective
-  letI : FiniteDimensional k (WithConv (Module.Dual k C)) :=
+  let : FiniteDimensional k (WithConv (Module.Dual k C)) :=
     FiniteDimensional.of_injective
       (WithConv.linearEquiv k (Module.Dual k C)).toLinearMap
       (WithConv.linearEquiv k (Module.Dual k C)).injective
@@ -136,7 +136,7 @@ theorem coalgebra_transfer
   have hright :
       (finrank k J : ℚ) - (finrank k N : ℚ) =
         (finrank k W : ℚ) -
-          (finrank k (W ⊓ D : Submodule k V) : ℚ) := by
+          (sfinrank k (W ⊓ D) : ℚ) := by
     simpa [J, N] using
       convDualAnnihilator_difference W D
   have hannNat :=

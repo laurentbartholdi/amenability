@@ -958,7 +958,7 @@ theorem finrank_stepU_difference_ge
     (hker : LinearMap.ker ell = codimOneLower A' A)
     (ha : ell a = 1) :
     (finrank k U : ℚ) -
-        finrank k (U ⊓ stepKernel A' A C D a : Submodule k C.carrier) ≤
+        sfinrank k (U ⊓ stepKernel A' A C D a) ≤
       (finrank k (stepUNumerator A' A C U D) : ℚ) -
         finrank k (stepUDenominator A' A C U D) := by
   let N := stepUNumerator A' A C U D
@@ -1005,8 +1005,10 @@ theorem finrank_stepU_difference_ge
     · rintro ⟨hxU, hxB⟩
       exact ⟨⟨x, hxU⟩, hxB, rfl⟩
   have hinterDim : finrank k (B.comap U.subtype) =
-      finrank k (U ⊓ B : Submodule k C.carrier) := by
-    rw [← hinterImage, finrank_ambientImage]
+      sfinrank k (U ⊓ B) := by
+    rw [← hinterImage]
+    simpa only [sfinrank] using
+      (finrank_ambientImage U (B.comap U.subtype)).symm
   rw [hinterDim] at hkerdim
   have hπq : (finrank k (LinearMap.range π) : ℚ) + finrank k P =
       finrank k N := by exact_mod_cast hπrank
@@ -1014,12 +1016,12 @@ theorem finrank_stepU_difference_ge
       finrank k (LinearMap.ker ψ) = finrank k U := by
     exact_mod_cast hψrank
   have hkerq : (finrank k (LinearMap.ker ψ) : ℚ) ≤
-      finrank k (U ⊓ B : Submodule k C.carrier) := by
+      sfinrank k (U ⊓ B) := by
     exact_mod_cast hkerdim
   have hrangeEq : LinearMap.range π = stepUQuotientSpace A' A C U D := rfl
   rw [hrangeEq] at hπq
   change (finrank k U : ℚ) -
-      finrank k (U ⊓ B : Submodule k C.carrier) ≤
+      sfinrank k (U ⊓ B) ≤
     (finrank k N : ℚ) - finrank k P
   linarith
 
@@ -1069,7 +1071,7 @@ theorem codimOne_transfer_step
       IsSubcoalgebra (k := k) B →
       t * ((finrank k C.carrier : ℚ) - finrank k B) ≤
         (finrank k U : ℚ) -
-          finrank k (U ⊓ B : Submodule k C.carrier)) :
+          sfinrank k (U ⊓ B)) :
     t * ((finrank k (FiniteSubcoalgebra.mul A C).carrier : ℚ) -
         finrank k (stepDenominator A' A C D)) ≤
       (finrank k (stepUNumerator A' A C U D) : ℚ) -
@@ -1103,7 +1105,7 @@ theorem codimOne_transfer_step
           finrank k (stepDenominator A' A C D)) =
         t * ((finrank k C.carrier : ℚ) - finrank k B) := by rw [hdimRat]
     _ ≤ (finrank k U : ℚ) -
-          finrank k (U ⊓ B : Submodule k C.carrier) := hsem B hB
+          sfinrank k (U ⊓ B) := hsem B hB
     _ ≤ (finrank k (stepUNumerator A' A C U D) : ℚ) -
           finrank k (stepUDenominator A' A C U D) := hU
 

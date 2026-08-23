@@ -164,13 +164,13 @@ theorem comul_mem_coannihilator_rTensor
         ((convDualCoannihilator M).subtype.rTensor C) := by
   rw [range_coannihilator_rTensor_eq_ker M]
   rw [LinearMap.mem_ker]
-  letI : FiniteDimensional k (WithConv (Module.Dual k C)) :=
+  let : FiniteDimensional k (WithConv (Module.Dual k C)) :=
     FiniteDimensional.of_injective
       (WithConv.linearEquiv k (Module.Dual k C)).toLinearMap
       (WithConv.linearEquiv k (Module.Dual k C)).injective
-  letI : FiniteDimensional k M :=
+  let : FiniteDimensional k M :=
     FiniteDimensional.of_injective M.subtype Subtype.val_injective
-  letI : Module.Free k M := Module.Free.of_divisionRing k M
+  let : Module.Free k M := Module.Free.of_divisionRing k M
   apply
     (dualTensorHom_bijective
       (R := k) (M := M) (N := C)).1

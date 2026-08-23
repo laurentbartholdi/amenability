@@ -73,7 +73,7 @@ theorem mul_subcoalgebraDensitySubspace_le
           t *
               ((finrank k Cfin.carrier : ℚ) - (finrank k B : ℚ)) ≤
             (finrank k U : ℚ) -
-              (finrank k (U ⊓ B : Submodule k Cfin.carrier) : ℚ) := by
+              (sfinrank k (U ⊓ B) : ℚ) := by
     intro B hB
     let Bamb : Submodule k H := ambientImage Cfin.carrier B
     have hBamb : IsSubcoalgebra (k := k) Bamb :=
@@ -99,8 +99,8 @@ theorem mul_subcoalgebraDensitySubspace_le
     have hs := subcoalgebraDensitySubspace_semistable G E t hBG
     change
       t * ((finrank k Ct : ℚ) - (finrank k BG : ℚ)) ≤
-        (finrank k (E ⊓ Ct : Submodule k G) : ℚ) -
-          (finrank k (E ⊓ BG : Submodule k G) : ℚ) at hs
+        (sfinrank k (E ⊓ Ct) : ℚ) -
+          (sfinrank k (E ⊓ BG) : ℚ) at hs
     have hUBimage :
         ambientImage Cfin.carrier (U ⊓ B) =
           ambientImage G (E ⊓ BG) := by
@@ -118,15 +118,14 @@ theorem mul_subcoalgebraDensitySubspace_le
       calc
         finrank k B = finrank k Bamb := (finrank_ambientImage Cfin.carrier B).symm
         _ = finrank k BG := by rw [← hBGimage]; exact finrank_ambientImage G BG
-    have hdimU : finrank k U = finrank k (E ⊓ Ct : Submodule k G) := by
+    have hdimU : finrank k U = sfinrank k (E ⊓ Ct) := by
       calc
         finrank k U = finrank k Uamb := by
           rw [← hUimage]
           exact (finrank_ambientImage Cfin.carrier U).symm
-        _ = finrank k (E ⊓ Ct : Submodule k G) := finrank_ambientImage G (E ⊓ Ct)
+        _ = sfinrank k (E ⊓ Ct) := finrank_ambientImage G (E ⊓ Ct)
     have hdimUB :
-        finrank k (U ⊓ B : Submodule k Cfin.carrier) =
-          finrank k (E ⊓ BG : Submodule k G) := by
+        sfinrank k (U ⊓ B) = sfinrank k (E ⊓ BG) := by
       calc
         _ = finrank k (ambientImage Cfin.carrier (U ⊓ B)) :=
           (finrank_ambientImage Cfin.carrier (U ⊓ B)).symm
@@ -193,7 +192,7 @@ theorem mul_subcoalgebraDensitySubspace_le
       finrank k (FiniteSubcoalgebra.mul F Cfin).carrier = finrank k FCt := by
     rw [hmulcarrier]
     exact finrank_ambientImage FG FCt
-  have hdimD : finrank k Damb = finrank k (FCt ⊓ Dt : Submodule k FG) := by
+  have hdimD : finrank k Damb = sfinrank k (FCt ⊓ Dt) := by
     change finrank k (ambientImage FG (FCt ⊓ Dt)) = _
     exact finrank_ambientImage FG (FCt ⊓ Dt)
   have hdimW :
@@ -208,7 +207,7 @@ theorem mul_subcoalgebraDensitySubspace_le
           (ambientImage (FiniteSubcoalgebra.mul F Cfin).carrier
               (FiniteSubcoalgebra.leftProductSubspace F Cfin U) ⊓ Damb :
             Submodule k H) =
-        finrank k (W ⊓ (FCt ⊓ Dt) : Submodule k FG) := by
+        sfinrank k (W ⊓ (FCt ⊓ Dt)) := by
     rw [hWintersection]
     exact finrank_ambientImage FG (W ⊓ (FCt ⊓ Dt))
   rw [hdimFC, hdimD, hdimW, hdimWintersection] at htransfer
