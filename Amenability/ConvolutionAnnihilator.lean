@@ -40,6 +40,7 @@ def convDualAnnihilator
   B.dualAnnihilator.comap
     (WithConv.linearEquiv k (Module.Dual k C)).toLinearMap
 
+omit [Coalgebra k C] in
 @[simp]
 theorem mem_convDualAnnihilator
     (B : Submodule k C)
@@ -51,6 +52,7 @@ theorem mem_convDualAnnihilator
         B.dualAnnihilator ↔ _
   simp only [Submodule.mem_dualAnnihilator, WithConv.linearEquiv_apply]
 
+omit [Coalgebra k C] in
 /--
 The `WithConv` type synonym does not change the dimension of an
 annihilator.
@@ -65,6 +67,7 @@ theorem finrank_convDualAnnihilator
       B.dualAnnihilator
   exact e.finrank_eq
 
+omit [Coalgebra k C] in
 /--
 Likewise for intersections of two convolution annihilators.
 -/
@@ -91,6 +94,7 @@ theorem finrank_inf_convDualAnnihilator
   rw [← heq]
   exact e.finrank_eq
 
+omit [Coalgebra k C] in
 /--
 The annihilator dimension identity in convolution-dual notation.
 -/
@@ -107,6 +111,7 @@ theorem convDualAnnihilator_difference
     finrank_inf_convDualAnnihilator B U]
   exact dualAnnihilator_difference U B
 
+omit [Coalgebra k C] in
 /--
 Semistability transported to convolution-dual notation.
 -/
@@ -128,6 +133,7 @@ theorem semistable_to_convDualAnnihilator
     ← finrank_inf_convDualAnnihilator B U] at h
   exact h
 
+omit [Coalgebra k C] in
 /--
 For finite-dimensional `C`, taking the coannihilator and then the
 annihilator recovers a subspace of `C*`.
@@ -154,6 +160,7 @@ def convDualCoannihilator
     Submodule k C :=
   (convUnderlying M).dualCoannihilator
 
+omit [Coalgebra k C] in
 /--
 In finite dimension, every convolution-dual subspace is the annihilator
 of its coannihilator, as a statement of vector spaces.

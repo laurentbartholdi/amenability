@@ -5,6 +5,7 @@ Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
 import Amenability.FundamentalTheoremComodule
 import Amenability.FiniteSubcoalgebra
+import Amenability.TensorContraction
 import Mathlib.LinearAlgebra.TensorProduct.Basis
 
 /-!
@@ -24,18 +25,6 @@ variable [Field k]
 variable [AddCommGroup C] [Module k C] [Coalgebra k C]
 variable [AddCommGroup M] [Module k M] [RightComodule k C M]
 variable [AddCommGroup X] [Module k X]
-
-/-- Contract the left tensor factor against a linear functional. -/
-noncomputable def TensorProduct.leftContract (f : M →ₗ[k] k) :
-    M ⊗[k] X →ₗ[k] X :=
-  (TensorProduct.lid k X).toLinearMap ∘ₗ f.rTensor X
-
-omit [Coalgebra k C] [RightComodule k C M] in
-@[simp]
-theorem TensorProduct.leftContract_tmul
-    (f : M →ₗ[k] k) (m : M) (y : X) :
-    TensorProduct.leftContract f (m ⊗ₜ[k] y) = f m • y := by
-  rfl
 
 /-- The coaction on a finite-dimensional right subcomodule factors through a
 finite-dimensional subcoalgebra of coefficients. -/

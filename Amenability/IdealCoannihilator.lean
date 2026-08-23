@@ -34,6 +34,7 @@ variable [FiniteDimensional k C]
 
 attribute [local instance 1100] Module.Free.of_divisionRing Module.Flat.of_free
 
+omit [Coalgebra k C] [Coalgebra.IsCocomm k C] [FiniteDimensional k C] in
 /--
 Membership in the convolution-dual coannihilator can be tested directly
 against the original convolution-dual subspace.
@@ -77,6 +78,7 @@ def convSubspaceEval
     ext φ
     exact map_smul φ.1.ofConv r c
 
+omit [Coalgebra k C] [Coalgebra.IsCocomm k C] [FiniteDimensional k C] in
 @[simp]
 theorem convSubspaceEval_apply
     (M : Submodule k (WithConv (Module.Dual k C)))
@@ -84,6 +86,7 @@ theorem convSubspaceEval_apply
     convSubspaceEval M c φ = φ.1 c :=
   rfl
 
+omit [Coalgebra k C] [Coalgebra.IsCocomm k C] [FiniteDimensional k C] in
 theorem ker_convSubspaceEval
     (M : Submodule k (WithConv (Module.Dual k C))) :
     LinearMap.ker (convSubspaceEval M) =
@@ -104,6 +107,7 @@ theorem ker_convSubspaceEval
     intro φ
     exact hc φ.1 φ.2
 
+omit [Coalgebra k C] [Coalgebra.IsCocomm k C] [FiniteDimensional k C] in
 /--
 Tensoring the evaluation kernel on the right identifies
 `B ⊗ C` with the corresponding kernel in the tensor product.
@@ -121,6 +125,7 @@ theorem range_coannihilator_rTensor_eq_ker
   rw [ker_convSubspaceEval M] at heq
   exact heq
 
+omit [Coalgebra.IsCocomm k C] [FiniteDimensional k C] in
 /--
 Pairing the tensor obtained by applying `convSubspaceEval` in the first
 leg with `φ ∈ M` and `ψ ∈ C*` gives the convolution product

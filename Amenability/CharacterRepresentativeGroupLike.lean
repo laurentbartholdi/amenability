@@ -32,6 +32,7 @@ variable (S :
   SplitDualFiltration k
     (WithConv (Module.Dual k F)))
 
+omit [Coalgebra.IsCocomm k F] in
 /--
 Evaluation of a pure tensor of functionals on `Δg` is convolution
 evaluation at `g`.

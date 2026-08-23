@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
 import Amenability.RightCoideal
-import Amenability.CoefficientCoalgebra
+import Amenability.TensorContraction
 import Amenability.SubcoalgebraAmbient
 import Amenability.FiniteSubcoalgebraMul
 import Mathlib.RingTheory.HopfAlgebra.GroupLike
@@ -375,6 +375,7 @@ theorem lowerProductSubspace_isSubcoalgebra
       (A'.carrier * C.carrier) hmul]
   exact (FiniteSubcoalgebra.mul A' C).isSubcoalgebra
 
+omit [Coalgebra.IsCocomm k H] in
 /-- Adding an internal subcoalgebra `D` preserves the subcoalgebra property
 of the step denominator. -/
 theorem stepDenominator_isSubcoalgebra
@@ -412,7 +413,7 @@ theorem stepQuotientMap_apply
 omit [Coalgebra.IsCocomm k H] in
 theorem stepQuotientMap_surjective
     (A' A C : FiniteSubcoalgebra k H)
-    (hAA : A'.carrier ≤ A.carrier)
+    (_hAA : A'.carrier ≤ A.carrier)
     (D : Submodule k (FiniteSubcoalgebra.mul A C).carrier)
     (ell : A.carrier →ₗ[k] k) (a : A.carrier)
     (hker : LinearMap.ker ell = codimOneLower A' A)
@@ -438,7 +439,8 @@ theorem stepQuotientMap_surjective
     change (x : H) * (c : H) - (a : H) * (ell x • (c : H)) ∈
       A'.carrier * C.carrier
     have hp := Submodule.mul_mem_mul (hlower x) c.2
-    convert hp using 1 <;> simp [sub_mul, Algebra.smul_mul_assoc,
+    convert hp using 1
+    all_goals simp [sub_mul, Algebra.smul_mul_assoc,
       Algebra.mul_smul_comm]
   intro q
   obtain ⟨x, rfl⟩ := Q.mkQ_surjective q
@@ -620,6 +622,7 @@ theorem quotient_comul_mul_eq
           Coalgebra.comul (R := k) (A := C.carrier) c)) = _
   rw [hfirst, hsecond', add_zero]
 
+omit [Coalgebra.IsCocomm k H] in
 /-- The kernel of the codimension-one quotient map is a right coideal. -/
 theorem stepKernel_isRightSubcomodule
     (A' A C : FiniteSubcoalgebra k H)
@@ -775,7 +778,7 @@ theorem lowerUSubspace_le_upper
 
 /-- The `U`-side numerator `D + AU`. -/
 noncomputable def stepUNumerator
-    (A' A C : FiniteSubcoalgebra k H) (U : Submodule k C.carrier)
+    (_A' A C : FiniteSubcoalgebra k H) (U : Submodule k C.carrier)
     (D : Submodule k (FiniteSubcoalgebra.mul A C).carrier) :
     Submodule k (FiniteSubcoalgebra.mul A C).carrier :=
   D ⊔ leftProductSubspace A C U
@@ -857,7 +860,7 @@ theorem stepUQuotientMap_apply
 omit [Coalgebra.IsCocomm k H] in
 theorem stepUQuotientMap_surjective
     (A' A C : FiniteSubcoalgebra k H)
-    (hAA : A'.carrier ≤ A.carrier) (U : Submodule k C.carrier)
+    (_hAA : A'.carrier ≤ A.carrier) (U : Submodule k C.carrier)
     (D : Submodule k (FiniteSubcoalgebra.mul A C).carrier)
     (ell : A.carrier →ₗ[k] k) (a : A.carrier)
     (hker : LinearMap.ker ell = codimOneLower A' A)
@@ -892,7 +895,8 @@ theorem stepUQuotientMap_surjective
         A'.carrier * ambientImage C.carrier U
       have hp := Submodule.mul_mem_mul (hlower x)
         (show (u : H) ∈ ambientImage C.carrier U from ⟨u, u.2, rfl⟩)
-      convert hp using 1 <;> simp [sub_mul, Algebra.smul_mul_assoc,
+      convert hp using 1
+      all_goals simp [sub_mul, Algebra.smul_mul_assoc,
         Algebra.mul_smul_comm]
   intro q
   rcases q.2 with ⟨x, hx⟩
