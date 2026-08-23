@@ -4,14 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
 import Mathlib.Algebra.Lie.OfAssociative
+import Mathlib.Algebra.Lie.TensorProduct
 import Mathlib.RingTheory.Coalgebra.Basic
 import Mathlib.LinearAlgebra.TensorProduct.Map
+import Amenability.TwoSidedCoideal
 
 /-!
 # Coalgebras carrying a compatible Lie-module structure
 -/
 
-namespace Coalgebra
+namespace HopfAmenability
 
 universe u v w
 
@@ -57,4 +59,4 @@ theorem counit_lie_apply (x : L) (m : M) :
     (LieModuleCoalgebra.counit_lie (k := k) (L := L) (M := M) x)
   simpa using h
 
-end Coalgebra
+end HopfAmenability

@@ -34,15 +34,27 @@ def IsLeftCoideal (P : Submodule k C) : Prop :=
 
 /-- A subspace which is both a left and a right coideal is a subcoalgebra.
 No cocommutativity assumption is needed. -/
-theorem isSubcoalgebra_of_left_and_right_coideal
+theorem isSubcoalgebra_of_twoSidedCoideal
     {P : Submodule k C}
-    (hR : IsRightCoideal P) (hL : IsLeftCoideal P) :
+    (hR : ∀ b : C, b ∈ P →
+      Coalgebra.comul (R := k) (A := C) b ∈
+        LinearMap.range (P.subtype.rTensor C))
+    (hL : ∀ b : C, b ∈ P →
+      Coalgebra.comul (R := k) (A := C) b ∈
+        LinearMap.range (P.subtype.lTensor C)) :
     HopfAmenability.IsSubcoalgebra (k := k) P := by
   intro c hc
   rw [HopfAmenability.range_mapIncl_self_eq_inf P]
   constructor
   · exact hR c hc
   · exact hL c hc
+
+/-- Predicate-packaged version of `isSubcoalgebra_of_twoSidedCoideal`. -/
+theorem isSubcoalgebra_of_left_and_right_coideal
+    {P : Submodule k C}
+    (hR : IsRightCoideal P) (hL : IsLeftCoideal P) :
+    HopfAmenability.IsSubcoalgebra (k := k) P :=
+  isSubcoalgebra_of_twoSidedCoideal hR hL
 
 /-- The regular-comodule formulation and the right-coideal formulation agree. -/
 theorem isRightSubcomodule_iff_isRightCoideal (P : Submodule k C) :

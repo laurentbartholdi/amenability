@@ -3,7 +3,7 @@ Copyright (c) 2026 Laurent Bartholdi. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
-import Amenability.LieActionSubspace
+import Amenability.LieExpansion
 import Amenability.TwoSidedCoideal
 import Amenability.SubcoalgebraAmbient
 import Amenability.FiniteSubcoalgebra
@@ -27,7 +27,7 @@ variable [Field k]
 variable [LieRing L] [LieAlgebra k L]
 variable [AddCommGroup M] [Module k M]
 variable [LieRingModule L M] [LieModule k L M]
-variable [Coalgebra k M] [Coalgebra.LieModuleCoalgebra k L M]
+variable [Coalgebra k M] [LieModuleCoalgebra k L M]
 
 /-- The copy of `F'` inside a containing subspace `F`. -/
 def lieCodimOneLower (F' F : Submodule k L) : Submodule k F :=
@@ -105,6 +105,84 @@ theorem le_sup_span_of_normalized_lieCodimOne
   refine ⟨(p : L), hp, ell yF • (x : L), ?_, ?_⟩
   · exact Submodule.smul_mem _ _ (Submodule.mem_span_singleton_self (x : L))
   · simp [p, yF]
+
+/-- The internal copy of the lower Lie expansion in the upper expansion. -/
+def lieLowerExpansionSubspace
+    (F' F : Submodule k L) [FiniteDimensional k F]
+    (C : FiniteSubcoalgebra k M) :
+    Submodule k (lieExpansionFiniteSubcoalgebra F C).carrier :=
+  (lieExpansion F' C.carrier).comap
+    (lieExpansionFiniteSubcoalgebra F C).carrier.subtype
+
+theorem ambientImage_lieLowerExpansionSubspace
+    (F' F : Submodule k L) [FiniteDimensional k F]
+    (hFF : F' ≤ F) (C : FiniteSubcoalgebra k M) :
+    ambientImage (lieExpansionFiniteSubcoalgebra F C).carrier
+        (lieLowerExpansionSubspace F' F C) =
+      lieExpansion F' C.carrier := by
+  apply ambientImage_comap_eq_of_le
+  exact lieExpansion_mono_left hFF C.carrier
+
+theorem lieLowerExpansionSubspace_isSubcoalgebra
+    (F' F : Submodule k L) [FiniteDimensional k F]
+    (hFF : F' ≤ F) (C : FiniteSubcoalgebra k M) :
+    IsSubcoalgebra (k := k) (lieLowerExpansionSubspace F' F C) := by
+  let A := lieExpansionFiniteSubcoalgebra F C
+  apply (isSubcoalgebra_ambientImage_iff A.carrier A.isSubcoalgebra
+    (lieLowerExpansionSubspace F' F C)).mp
+  rw [ambientImage_lieLowerExpansionSubspace F' F hFF C]
+  exact C.isSubcoalgebra.lieExpansion F'
+
+/-- The denominator `D + F'⁺C` inside `F⁺C`. -/
+def lieStepDenominator
+    (F' F : Submodule k L) [FiniteDimensional k F]
+    (C : FiniteSubcoalgebra k M)
+    (D : Submodule k (lieExpansionFiniteSubcoalgebra F C).carrier) :
+    Submodule k (lieExpansionFiniteSubcoalgebra F C).carrier :=
+  D ⊔ lieLowerExpansionSubspace F' F C
+
+theorem lieStepDenominator_isSubcoalgebra
+    (F' F : Submodule k L) [FiniteDimensional k F]
+    (hFF : F' ≤ F) (C : FiniteSubcoalgebra k M)
+    (D : Submodule k (lieExpansionFiniteSubcoalgebra F C).carrier)
+    (hD : IsSubcoalgebra (k := k) D) :
+    IsSubcoalgebra (k := k) (lieStepDenominator F' F C D) := by
+  exact hD.sup (lieLowerExpansionSubspace_isSubcoalgebra F' F hFF C)
+
+/-- Action by the chosen complement, followed by the denominator quotient. -/
+def lieStepQuotientMap
+    (F' F : Submodule k L) [FiniteDimensional k F]
+    (C : FiniteSubcoalgebra k M)
+    (D : Submodule k (lieExpansionFiniteSubcoalgebra F C).carrier)
+    (a : F) :
+    C.carrier →ₗ[k]
+      (lieExpansionFiniteSubcoalgebra F C).carrier ⧸
+        lieStepDenominator F' F C D :=
+  (lieStepDenominator F' F C D).mkQ.comp
+    (LinearMap.codRestrict (lieExpansionFiniteSubcoalgebra F C).carrier
+      ((LieModule.toEnd k L M (a : L)).comp C.carrier.subtype)
+      (fun c => lieActionSubspace_le_lieExpansion F C.carrier
+        (lie_mem_lieActionSubspace a.2 c.2)))
+
+@[simp]
+theorem lieStepQuotientMap_apply
+    (F' F : Submodule k L) [FiniteDimensional k F]
+    (C : FiniteSubcoalgebra k M)
+    (D : Submodule k (lieExpansionFiniteSubcoalgebra F C).carrier)
+    (a : F) (c : C.carrier) :
+    lieStepQuotientMap F' F C D a c =
+      (lieStepDenominator F' F C D).mkQ
+        ⟨⁅(a : L), (c : M)⁆,
+          lieActionSubspace_le_lieExpansion F C.carrier
+            (lie_mem_lieActionSubspace a.2 c.2)⟩ := rfl
+
+/-- The kernel produced by the codimension-one quotient map. -/
+def lieStepKernel
+    (F' F : Submodule k L) [FiniteDimensional k F]
+    (C : FiniteSubcoalgebra k M)
+    (D : Submodule k (lieExpansionFiniteSubcoalgebra F C).carrier)
+    (a : F) : Submodule k C.carrier :=
+  LinearMap.ker (lieStepQuotientMap F' F C D a)
 
 end
 
