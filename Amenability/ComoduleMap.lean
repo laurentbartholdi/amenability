@@ -13,7 +13,7 @@ import Mathlib.RingTheory.Flat.Basic
 
 open TensorProduct
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 noncomputable section
 
@@ -136,4 +136,4 @@ end IsRightSubcomodule
 
 end
 
-end UnifiedRounding
+end HopfAmenability

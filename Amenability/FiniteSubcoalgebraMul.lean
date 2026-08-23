@@ -18,7 +18,7 @@ For finite subcoalgebras `F,C` of a bialgebra `H`, the multiplication map
 
 open Coalgebra LinearMap TensorProduct
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v
 
@@ -122,4 +122,4 @@ theorem mulCoalgHom_surjective
 
 end FiniteSubcoalgebra
 
-end UnifiedRounding
+end HopfAmenability

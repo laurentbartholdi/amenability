@@ -16,7 +16,7 @@ import Mathlib.LinearAlgebra.Dual.Lemmas
 
 open Module Polynomial
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 noncomputable section
 
@@ -326,4 +326,4 @@ theorem completeInvariantFlag_of_commute_of_splits_charpoly
 
 end
 
-end UnifiedRounding
+end HopfAmenability

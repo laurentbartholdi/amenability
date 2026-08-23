@@ -18,7 +18,7 @@ The subtype inclusion is then a coalgebra homomorphism.
 
 open Coalgebra LinearMap TensorProduct
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v
 
@@ -81,4 +81,4 @@ theorem subcoalgebraInclusion_injective
   let := subcoalgebraCoalgebra C hC
   exact C.injective_subtype
 
-end UnifiedRounding
+end HopfAmenability

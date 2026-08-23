@@ -18,7 +18,7 @@ import Mathlib.RingTheory.Flat.Basic
 
 open Module TensorProduct
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 noncomputable section
 
@@ -440,4 +440,4 @@ theorem sfinrank_eq_comap_add_map_of_ker_eq_range
 
 end
 
-end UnifiedRounding
+end HopfAmenability

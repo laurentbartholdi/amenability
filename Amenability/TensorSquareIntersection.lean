@@ -25,7 +25,7 @@ is free, hence flat, so tensoring preserves the exact sequence
 
 open scoped TensorProduct
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v w
 
@@ -266,4 +266,4 @@ theorem subcoalgebraInfClosed
   subcoalgebraInfClosed_of_tensorSquareIntersection
     (tensorSquareIntersectionProperty (k := k) (H := H)) G
 
-end UnifiedRounding
+end HopfAmenability

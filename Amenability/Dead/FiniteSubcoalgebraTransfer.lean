@@ -3,8 +3,8 @@ Copyright (c) 2026 Laurent Bartholdi. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
-import Amenability.FiniteSubcoalgebraTransferEvaluation
-import Amenability.CoalgebraTransferAbstract
+import Amenability.Dead.FiniteSubcoalgebraTransferEvaluation
+import Amenability.Dead.CoalgebraTransferAbstract
 
 /-!
 # The transfer inequality for finite subcoalgebras
@@ -23,7 +23,7 @@ The layer coefficient of a functional annihilating `FU` annihilates
 
 open Coalgebra Module TensorProduct WithConv
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 noncomputable section
 
@@ -160,4 +160,4 @@ end SplitDualFiltration
 
 end
 
-end UnifiedRounding
+end HopfAmenability

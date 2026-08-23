@@ -27,7 +27,7 @@ so that interface must first be supplied locally (or upstreamed).
 
 open scoped BigOperators
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 section WeightedAverage
 
@@ -211,4 +211,4 @@ theorem quotient_bound (C : LayerCertificate ι) :
 
 end LayerCertificate
 
-end UnifiedRounding
+end HopfAmenability

@@ -18,7 +18,7 @@ in the transfer argument.
 
 open Coalgebra LinearMap TensorProduct
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v w
 
@@ -160,4 +160,4 @@ end FiniteSubcoalgebra
 
 end FiniteSubcoalgebra
 
-end UnifiedRounding
+end HopfAmenability

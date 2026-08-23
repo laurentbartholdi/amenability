@@ -21,7 +21,7 @@ left for a separate file.  The zero subspace and sums are handled here.
 
 open scoped TensorProduct
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v
 
@@ -123,4 +123,4 @@ theorem Submodule.map_inf_of_injective
     subst x'
     exact ⟨x, ⟨hxC, hxD⟩, rfl⟩
 
-end UnifiedRounding
+end HopfAmenability

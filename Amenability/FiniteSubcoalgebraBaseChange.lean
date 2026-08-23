@@ -16,7 +16,7 @@ import Mathlib.RingTheory.HopfAlgebra.TensorProduct
 
 open Coalgebra Module TensorProduct
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 noncomputable section
 
@@ -31,7 +31,7 @@ namespace FiniteSubcoalgebra
 /-- Scalar extension of a finite subcoalgebra. -/
 noncomputable def baseChange (C : FiniteSubcoalgebra k H) (K : Type v)
     [Field K] [Algebra k K] : FiniteSubcoalgebra K (K ⊗[k] H) where
-  carrier := UnifiedRounding.baseChangeSubspace (k := k) K C.carrier
+  carrier := HopfAmenability.baseChangeSubspace (k := k) K C.carrier
   isSubcoalgebra := isSubcoalgebra_baseChangeSubspace C.carrier C.isSubcoalgebra
   finiteDimensional := by
     let f := C.carrier.subtype.baseChange K
@@ -42,7 +42,7 @@ noncomputable def baseChange (C : FiniteSubcoalgebra k H) (K : Type v)
 @[simp]
 theorem baseChange_carrier (C : FiniteSubcoalgebra k H) :
     (C.baseChange K).carrier =
-      UnifiedRounding.baseChangeSubspace (k := k) K C.carrier := rfl
+      HopfAmenability.baseChangeSubspace (k := k) K C.carrier := rfl
 
 /-- The canonical scalar-extended inclusion into the ambient coalgebra. -/
 noncomputable def baseChangeInclusion (C : FiniteSubcoalgebra k H) :
@@ -104,7 +104,7 @@ noncomputable def baseChangeSubspace
     (C : FiniteSubcoalgebra k H) (K : Type v)
     [Field K] [Algebra k K] (U : Submodule k C.carrier) :
     Submodule K (C.baseChange K).carrier :=
-  (UnifiedRounding.baseChangeSubspace (k := k) K U).map
+  (HopfAmenability.baseChangeSubspace (k := k) K U).map
     (C.baseChangeCarrierEquiv (K := K)).toLinearMap
 
 theorem sfinrank_baseChangeSubspace_internal
@@ -112,14 +112,14 @@ theorem sfinrank_baseChangeSubspace_internal
     finrank K (C.baseChangeSubspace K U) = finrank k U := by
   calc
     finrank K (C.baseChangeSubspace K U) =
-        finrank K (UnifiedRounding.baseChangeSubspace (k := k) K U) :=
+        finrank K (HopfAmenability.baseChangeSubspace (k := k) K U) :=
       (C.baseChangeCarrierEquiv (K := K)).toLinearEquiv.finrank_map_eq _
-    _ = finrank k U := UnifiedRounding.sfinrank_baseChangeSubspace U
+    _ = finrank k U := HopfAmenability.sfinrank_baseChangeSubspace U
 
 theorem ambientImage_baseChangeSubspace_internal
     (C : FiniteSubcoalgebra k H) (U : Submodule k C.carrier) :
     ambientImage (C.baseChange K).carrier (C.baseChangeSubspace K U) =
-      UnifiedRounding.baseChangeSubspace (k := k) K
+      HopfAmenability.baseChangeSubspace (k := k) K
         (ambientImage C.carrier U) := by
   let e := ambientImageEquiv C.carrier U
   let eK := LinearEquiv.baseChange k K U (ambientImage C.carrier U) e
@@ -190,11 +190,11 @@ variable {A : Type w} [Ring A] [Algebra k A]
 
 /-- Products of subspaces commute with scalar extension. -/
 theorem baseChangeSubspace_mul (P Q : Submodule k A) :
-    UnifiedRounding.baseChangeSubspace (k := k) K
+    HopfAmenability.baseChangeSubspace (k := k) K
         (P * Q : Submodule k A) =
-      (UnifiedRounding.baseChangeSubspace (k := k) K P :
+      (HopfAmenability.baseChangeSubspace (k := k) K P :
         Submodule K (K ⊗[k] A)) *
-        (UnifiedRounding.baseChangeSubspace (k := k) K Q :
+        (HopfAmenability.baseChangeSubspace (k := k) K Q :
           Submodule K (K ⊗[k] A)) := by
   apply le_antisymm
   · rintro _ ⟨z, rfl⟩
@@ -233,7 +233,7 @@ theorem baseChangeSubspace_mul (P Q : Submodule k A) :
         rcases y.2 with ⟨qy, hqy⟩
         have hmul (qx : K ⊗[k] P) (qy : K ⊗[k] Q) :
             (P.subtype.baseChange K qx) * (Q.subtype.baseChange K qy) ∈
-              UnifiedRounding.baseChangeSubspace (k := k) K (P * Q) := by
+              HopfAmenability.baseChangeSubspace (k := k) K (P * Q) := by
           induction qx using TensorProduct.induction_on with
           | zero => simp
           | add qx qx' hx hx' =>
@@ -273,11 +273,11 @@ theorem semistable_baseChange
         finrank K (C.baseChangeSubspace K U ⊓ B :
           Submodule K (C.baseChange K).carrier) := by
   let e := C.baseChangeCarrierEquiv (K := K)
-  let U₀ := UnifiedRounding.baseChangeSubspace (k := k) K U
+  let U₀ := HopfAmenability.baseChangeSubspace (k := k) K U
   let Z : Submodule K (K ⊗[k] C.carrier) := B.map e.symm.toLinearMap
   have hZ : IsSubcoalgebra (k := K) Z :=
     hB.map_coalgHom e.symm.toCoalgHom
-  have hmain := UnifiedRounding.semistable_baseChange
+  have hmain := HopfAmenability.semistable_baseChange
     (K := K) U t hsem Z hZ
   have hZmap : Z.map e.toLinearMap = B := by
     ext x
@@ -326,4 +326,4 @@ end FiniteSubcoalgebra
 
 end
 
-end UnifiedRounding
+end HopfAmenability

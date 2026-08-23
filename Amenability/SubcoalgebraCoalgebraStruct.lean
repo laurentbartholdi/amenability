@@ -23,7 +23,7 @@ The coalgebra axioms are proved in `SubcoalgebraCoalgebra.lean`.
 
 open scoped TensorProduct
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v
 
@@ -136,4 +136,4 @@ theorem counit_comp_subtype [Coalgebra k H]
   let := subcoalgebraCoalgebraStruct C hC
   rfl
 
-end UnifiedRounding
+end HopfAmenability

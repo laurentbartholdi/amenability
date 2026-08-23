@@ -23,7 +23,7 @@ proves that it implies all the intersection-closure hypotheses used by
 `CoalgebraDensity.lean`.
 -/
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v
 
@@ -73,4 +73,4 @@ theorem subcoalgebraInfClosed_of_tensorSquareIntersection
   rw [ambientImage_inf]
   exact hC.inf_of_tensorSquareIntersection hTensor hD
 
-end UnifiedRounding
+end HopfAmenability

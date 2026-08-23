@@ -16,7 +16,7 @@ import Mathlib.LinearAlgebra.TensorProduct.RightExactness
 
 open Coalgebra Module TensorProduct
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 noncomputable section
 
@@ -1117,4 +1117,4 @@ end PrimalTransfer
 
 end
 
-end UnifiedRounding
+end HopfAmenability

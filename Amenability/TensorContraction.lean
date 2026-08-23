@@ -12,7 +12,7 @@ import Mathlib.LinearAlgebra.TensorProduct.Map
 
 open TensorProduct
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 noncomputable section
 
@@ -36,4 +36,4 @@ theorem TensorProduct.leftContract_tmul
 
 end
 
-end UnifiedRounding
+end HopfAmenability

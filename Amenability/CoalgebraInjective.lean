@@ -22,7 +22,7 @@ We then use it to transport the coalgebra axioms from a genuine coalgebra
 open Coalgebra LinearMap TensorProduct
 open scoped TensorProduct
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v w x y
 
@@ -301,4 +301,4 @@ noncomputable def coalgebraOfInjectiveCoalgHom
 
 end InjectivePullback
 
-end UnifiedRounding
+end HopfAmenability

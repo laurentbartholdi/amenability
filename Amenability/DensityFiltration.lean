@@ -20,7 +20,7 @@ coalgebraic transfer argument.
 
 open Module
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v
 
@@ -111,4 +111,4 @@ theorem density_jump_identity [FiniteDimensional k V]
       (intersectionRank E C : ℚ) - (intersectionRank E D : ℚ) :=
   maximizer_jump_identity hC hD
 
-end UnifiedRounding
+end HopfAmenability

@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
 import Amenability.DensityFiltration
-import Amenability.UnifiedRoundingCore
+import Amenability.RoundingCore
 
 /-!
 # Finite rounding from the density filtration
@@ -17,7 +17,7 @@ over the resulting intervals, and package the two mass estimates into a
 
 open Module
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 noncomputable section
 
@@ -631,4 +631,4 @@ theorem exists_ratio_le_of_density_filtrations
 
 end
 
-end UnifiedRounding
+end HopfAmenability

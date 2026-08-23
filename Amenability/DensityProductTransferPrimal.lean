@@ -12,7 +12,7 @@ import Amenability.CoalgebraDensityTransfer
 
 open Coalgebra Module
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 noncomputable section
 
@@ -206,4 +206,4 @@ theorem mul_subcoalgebraDensitySubspace_le_primal
 
 end
 
-end UnifiedRounding
+end HopfAmenability

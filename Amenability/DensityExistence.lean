@@ -21,7 +21,7 @@ under sums implies that this maximizer is the unique largest maximizer.
 
 open Module
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v
 
@@ -279,4 +279,4 @@ theorem densitySubspace_semistable [FiniteDimensional k V]
         (intersectionRank E B : ℚ) := by
   exact (densitySubspace_isMaximizer 𝓛 E t).semistable hB
 
-end UnifiedRounding
+end HopfAmenability

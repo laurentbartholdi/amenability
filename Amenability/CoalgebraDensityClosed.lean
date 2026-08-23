@@ -16,7 +16,7 @@ definitions in `CoalgebraDensity.lean`.
 
 open Module
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v
 
@@ -79,4 +79,4 @@ theorem subcoalgebraDensitySubspace_semistable
   exact coalgebraDensitySubspace_semistable G
     (subcoalgebraInfClosed (k := k) (H := H) G) E t hB
 
-end UnifiedRounding
+end HopfAmenability

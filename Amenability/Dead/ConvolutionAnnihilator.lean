@@ -3,9 +3,9 @@ Copyright (c) 2026 Laurent Bartholdi. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
-import Amenability.DualSemistability
-import Amenability.CoalgHomDual
-import Amenability.SplitDual
+import Amenability.Dead.DualSemistability
+import Amenability.Dead.CoalgHomDual
+import Amenability.Dead.SplitDual
 import Mathlib.LinearAlgebra.Dual.Lemmas
 
 /-!
@@ -22,7 +22,7 @@ an ideal subspace of the convolution dual.
 
 open Module WithConv
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v
 
@@ -230,4 +230,4 @@ theorem convDualAnnihilator_isIdealSubspace
   change f (r * x) = 0
   rw [map_mul, hx, mul_zero]
 
-end UnifiedRounding
+end HopfAmenability

@@ -338,7 +338,7 @@ That `C_t(E)` is the required rounded subcoalgebra.
 The Lean implementation should probably avoid measure theory: the density
 filtration has finitely many values, so use its finite jump/step
 description and a finite weighted-average lemma already present in
-`UnifiedRoundingCore.lean`.
+`RoundingCore.lean`.
 
 ---
 
@@ -519,7 +519,7 @@ The following files form the established base. The user has already
 corrected the 24-file batch locally; do not replace them with older
 generated versions.
 
-1. `UnifiedRoundingCore.lean`
+1. `RoundingCore.lean`
    - `exists_ratio_le_of_weighted_average`
    - `layer_transfer`
    - `RoundingCertificate`

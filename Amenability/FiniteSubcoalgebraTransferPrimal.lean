@@ -15,7 +15,7 @@ import Mathlib.RingTheory.HopfAlgebra.TensorProduct
 
 open Coalgebra Module TensorProduct
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 noncomputable section
 
@@ -106,4 +106,4 @@ theorem finiteSubcoalgebra_transfer_ambient
 
 end
 
-end UnifiedRounding
+end HopfAmenability

@@ -17,7 +17,7 @@ subspace `G ≤ H`. The only coalgebraic input is that `C` is admissible,
 i.e. its ambient image is a subcoalgebra.
 -/
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v
 
@@ -66,4 +66,4 @@ theorem le_subcoalgebraDensitySubspace_of_transfer
   exact le_densitySubspace_of_transfer
     𝓛 t hC hUE hUC htransfer
 
-end UnifiedRounding
+end HopfAmenability

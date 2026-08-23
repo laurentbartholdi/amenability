@@ -20,7 +20,7 @@ dim I - dim (I ∩ K) = dim U - dim (U ∩ B)
 is the numerical bridge used in the transfer lemma.
 -/
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 open Module
 
@@ -111,4 +111,4 @@ theorem semistable_to_dualAnnihilator
   rw [hdiff]
   exact hsem
 
-end UnifiedRounding
+end HopfAmenability

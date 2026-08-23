@@ -12,7 +12,7 @@ import Amenability.TensorSquareIntersection
 
 open Coalgebra TensorProduct
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 noncomputable section
 
@@ -67,4 +67,4 @@ theorem isRightSubcomodule_iff_isSubcoalgebra
 
 end
 
-end UnifiedRounding
+end HopfAmenability

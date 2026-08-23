@@ -12,7 +12,7 @@ import Amenability.FundamentalTheoremCoalgebra
 
 open Coalgebra Module
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 noncomputable section
 
@@ -37,9 +37,10 @@ theorem exists_finiteSubcoalgebra_ratio_le
             (finrank k C.carrier : ℚ) ≤
           (finrank k (F.carrier * E) : ℚ) /
             (finrank k E : ℚ) := by
-  obtain ⟨G, hEG⟩ := exists_finiteSubcoalgebra_containing_submodule E
+  obtain ⟨G, hEG⟩ :=
+    Coalgebra.exists_finiteSubcoalgebra_containing_submodule E
   exact exists_finiteSubcoalgebra_ratio_le_of_le F E hE G hEG
 
 end
 
-end UnifiedRounding
+end HopfAmenability

@@ -3,8 +3,8 @@ Copyright (c) 2026 Laurent Bartholdi. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
-import Amenability.SplitTensorFiltration
-import Amenability.TransferData
+import Amenability.Dead.SplitTensorFiltration
+import Amenability.Dead.TransferData
 import Mathlib.RingTheory.TensorProduct.Maps
 
 /-!
@@ -24,7 +24,7 @@ rho_i (r ⊗ a) = S.character i r * a.
 
 open TensorProduct
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v w
 
@@ -205,4 +205,4 @@ noncomputable def tensorTransferData :
 
 end SplitDualFiltration
 
-end UnifiedRounding
+end HopfAmenability

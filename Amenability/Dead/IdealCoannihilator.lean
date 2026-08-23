@@ -3,7 +3,7 @@ Copyright (c) 2026 Laurent Bartholdi. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
-import Amenability.ConvolutionAnnihilator
+import Amenability.Dead.ConvolutionAnnihilator
 import Amenability.TensorSquareIntersection
 import Mathlib.LinearAlgebra.Contraction
 import Mathlib.RingTheory.Flat.Basic
@@ -20,7 +20,7 @@ anti-correspondence between subcoalgebras of `C` and ideals of `C*`.
 
 open Coalgebra Module TensorProduct WithConv
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 noncomputable section
 
@@ -251,4 +251,4 @@ theorem convDualCoannihilator_isSubcoalgebra
 
 end
 
-end UnifiedRounding
+end HopfAmenability

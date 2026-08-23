@@ -19,7 +19,7 @@ subcoalgebras of a fixed finite-dimensional ambient coalgebra.
 
 open Module
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v
 
@@ -282,4 +282,4 @@ theorem maximizer_jump_identity
   unfold densityScore at hscore
   linarith
 
-end UnifiedRounding
+end HopfAmenability

@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
 import Amenability.FiniteSubcoalgebraMul
-import Amenability.CoalgHomDual
-import Amenability.DualTensorAlgebra
+import Amenability.Dead.CoalgHomDual
+import Amenability.Dead.DualTensorAlgebra
 
 /-!
 # The dual embedding `(FC)* ↪ F* ⊗ C*`
@@ -21,7 +21,7 @@ used in the transfer lemma.
 
 open Coalgebra TensorProduct WithConv
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v
 
@@ -89,4 +89,4 @@ theorem mulDualEmbedding_evaluation_ambient
 
 end FiniteSubcoalgebra
 
-end UnifiedRounding
+end HopfAmenability

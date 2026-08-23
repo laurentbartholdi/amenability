@@ -3,7 +3,7 @@ Copyright (c) 2026 Laurent Bartholdi. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
-import Amenability.FiniteSubcoalgebraDualEmbedding
+import Amenability.Dead.FiniteSubcoalgebraDualEmbedding
 
 /-!
 # Split finite-dimensional algebras: transfer data
@@ -18,7 +18,7 @@ such a certificate from the hypothesis that every simple module is
 one-dimensional.
 -/
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v
 
@@ -136,4 +136,4 @@ theorem coeff_mul_apply
 
 end SplitDualFiltration
 
-end UnifiedRounding
+end HopfAmenability

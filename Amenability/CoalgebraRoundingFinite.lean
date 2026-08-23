@@ -16,7 +16,7 @@ of the coalgebra density filtration with left multiplication.
 
 open Coalgebra Module
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 noncomputable section
 
@@ -178,4 +178,4 @@ theorem exists_finiteSubcoalgebra_ratio_le_of_le
 
 end
 
-end UnifiedRounding
+end HopfAmenability

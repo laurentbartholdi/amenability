@@ -3,7 +3,7 @@ Copyright (c) 2026 Laurent Bartholdi. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
-import Amenability.TransferData
+import Amenability.Dead.TransferData
 import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 import Mathlib.LinearAlgebra.Dimension.Finrank
 
@@ -16,7 +16,7 @@ rank-nullity form
 `dim J_i = dim J_{i-1} + dim M_i`.
 -/
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v w
 
@@ -128,4 +128,4 @@ theorem finrank_step_succ
 
 end FilteredTransferData
 
-end UnifiedRounding
+end HopfAmenability

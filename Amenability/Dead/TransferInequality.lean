@@ -3,8 +3,8 @@ Copyright (c) 2026 Laurent Bartholdi. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
-import Amenability.TransferDimensions
-import Amenability.UnifiedRoundingCore
+import Amenability.Dead.TransferDimensions
+import Amenability.RoundingCore
 import Amenability.SubmoduleFinrank
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.LinearAlgebra.Dimension.Finrank
@@ -34,7 +34,7 @@ This is the abstract numerical heart of the transfer lemma.
 open scoped BigOperators
 open Module
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 /--
 A finite telescoping lemma indexed by `Fin`.
@@ -245,4 +245,4 @@ theorem filtered_transfer_finrank
 
 end FilteredTransferData
 
-end UnifiedRounding
+end HopfAmenability

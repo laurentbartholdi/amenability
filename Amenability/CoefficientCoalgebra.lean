@@ -14,7 +14,9 @@ import Mathlib.LinearAlgebra.TensorProduct.Basis
 
 open Module TensorProduct
 
-namespace UnifiedRounding
+namespace Coalgebra
+
+open HopfAmenability
 
 noncomputable section
 
@@ -45,14 +47,14 @@ theorem exists_finiteSubcoalgebra_coaction_of_rightSubcomodule
     exact hN (e j : M) (e j).2
   choose z hz using hzExists
   let coeff : I → I → C := fun i j =>
-    TensorProduct.equivFinsuppOfBasisLeft e (z j) i
+    _root_.TensorProduct.equivFinsuppOfBasisLeft e (z j) i
   have hzExpansion : ∀ j : I,
       z j = ∑ i, e i ⊗ₜ[k] coeff i j := by
     intro j
-    let a : I →₀ C := TensorProduct.equivFinsuppOfBasisLeft e (z j)
+    let a : I →₀ C := _root_.TensorProduct.equivFinsuppOfBasisLeft e (z j)
     calc
-      z j = (TensorProduct.equivFinsuppOfBasisLeft e).symm a := by
-        exact (TensorProduct.equivFinsuppOfBasisLeft e).symm_apply_apply (z j) |>.symm
+      z j = (_root_.TensorProduct.equivFinsuppOfBasisLeft e).symm a := by
+        exact (_root_.TensorProduct.equivFinsuppOfBasisLeft e).symm_apply_apply (z j) |>.symm
       _ = a.sum fun i c => e i ⊗ₜ[k] c := by simp
       _ = ∑ i, e i ⊗ₜ[k] coeff i j := by
         classical
@@ -72,16 +74,17 @@ theorem exists_finiteSubcoalgebra_coaction_of_rightSubcomodule
         ∑ i, coeff l i ⊗ₜ[k] coeff i j := by
     intro l j
     have hcoassoc := RightComodule.coassoc_apply (k := k) (C := C) (e j : M)
-    change TensorProduct.assoc k M C C (ρ.rTensor C (ρ (e j : M))) =
+    change _root_.TensorProduct.assoc k M C C (ρ.rTensor C (ρ (e j : M))) =
       (Coalgebra.comul (R := k) (A := C)).lTensor M (ρ (e j : M)) at hcoassoc
     rw [hstar j, map_sum, map_sum] at hcoassoc
     simp only [LinearMap.rTensor_tmul] at hcoassoc
     simp_rw [hstar] at hcoassoc
-    simp only [sum_tmul, map_sum, TensorProduct.assoc_tmul] at hcoassoc
+    simp only [sum_tmul, map_sum, _root_.TensorProduct.assoc_tmul] at hcoassoc
     let fl : M →ₗ[k] k :=
       linearIndependentCoordinate (fun i : I => (e i : M)) heIndependent l
-    have hcontract := congrArg (TensorProduct.leftContract fl) hcoassoc
-    simp only [map_sum, TensorProduct.leftContract_tmul] at hcontract
+    have hcontract :=
+      congrArg (HopfAmenability.TensorProduct.leftContract fl) hcoassoc
+    simp only [map_sum, HopfAmenability.TensorProduct.leftContract_tmul] at hcontract
     simpa [fl, linearIndependentCoordinate_apply] using hcontract.symm
   let D0 : Submodule k C :=
     Submodule.span k (Set.range fun p : I × I => coeff p.1 p.2)
@@ -90,7 +93,7 @@ theorem exists_finiteSubcoalgebra_coaction_of_rightSubcomodule
     exact Submodule.subset_span (Set.mem_range_self (i, j))
   have hD0 : IsSubcoalgebra (k := k) D0 := by
     let stable : Submodule k C :=
-      (LinearMap.range (TensorProduct.mapIncl D0 D0)).comap
+      (LinearMap.range (_root_.TensorProduct.mapIncl D0 D0)).comap
         (Coalgebra.comul (R := k) (A := C))
     have hD0stable : D0 ≤ stable := by
       change Submodule.span k
@@ -98,7 +101,7 @@ theorem exists_finiteSubcoalgebra_coaction_of_rightSubcomodule
       rw [Submodule.span_le]
       rintro c ⟨p, rfl⟩
       change Coalgebra.comul (R := k) (A := C) (coeff p.1 p.2) ∈
-        LinearMap.range (TensorProduct.mapIncl D0 D0)
+        LinearMap.range (_root_.TensorProduct.mapIncl D0 D0)
       refine ⟨∑ i, (⟨coeff p.1 i, hcoeffD0 p.1 i⟩ : D0) ⊗ₜ[k]
           (⟨coeff i p.2, hcoeffD0 i p.2⟩ : D0), ?_⟩
       rw [map_sum]
@@ -137,4 +140,4 @@ theorem exists_finiteSubcoalgebra_coaction_of_rightSubcomodule
 
 end
 
-end UnifiedRounding
+end Coalgebra

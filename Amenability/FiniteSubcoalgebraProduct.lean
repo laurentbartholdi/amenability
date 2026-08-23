@@ -14,7 +14,7 @@ The product `F * C` is the range of `Submodule.mulMap F C`, so it is
 finite-dimensional as soon as `F` and `C` are finite-dimensional.
 -/
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v
 
@@ -50,4 +50,4 @@ theorem mulMap_surjective
     Function.Surjective (Submodule.mulMap' F C) :=
   Submodule.mulMap'_surjective F C
 
-end UnifiedRounding
+end HopfAmenability

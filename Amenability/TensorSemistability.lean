@@ -12,7 +12,7 @@ import Amenability.TensorRightComodule
 
 open Module TensorProduct
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 noncomputable section
 
@@ -178,4 +178,4 @@ theorem tensor_semistable
 
 end
 
-end UnifiedRounding
+end HopfAmenability

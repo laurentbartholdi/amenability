@@ -3,7 +3,7 @@ Copyright (c) 2026 Laurent Bartholdi. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
-import Amenability.SplitDual
+import Amenability.Dead.SplitDual
 
 /-!
 # Abstract filtered transfer data
@@ -20,7 +20,7 @@ The principal result here is that the image in `A` of the `i`-th layer of
 an ideal of `Q` is again an ideal subspace of `A`.
 -/
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v w
 
@@ -179,4 +179,4 @@ theorem mem_ker_layerMap_iff
 
 end FilteredTransferData
 
-end UnifiedRounding
+end HopfAmenability

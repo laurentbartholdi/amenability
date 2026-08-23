@@ -11,7 +11,9 @@ import Amenability.CoefficientCoalgebra
 
 open Coalgebra Module TensorProduct
 
-namespace UnifiedRounding
+namespace Coalgebra
+
+open HopfAmenability
 
 noncomputable section
 
@@ -69,7 +71,8 @@ theorem exists_finiteSubcoalgebra_containing_submodule
     [FiniteDimensional k E] :
     ∃ D : FiniteSubcoalgebra k C, E ≤ D.carrier := by
   obtain ⟨N, hN, hNfin, hEN⟩ :=
-    exists_finiteDimensional_rightSubcomodule_of_submodule (C := C) E
+    RightComodule.exists_finiteDimensional_rightSubcomodule_of_submodule
+      (C := C) E
   let _ : FiniteDimensional k N := hNfin
   obtain ⟨D, hND⟩ :=
     exists_finiteSubcoalgebra_containing_rightSubcomodule N hN
@@ -94,4 +97,4 @@ theorem exists_finiteSubcoalgebra_containing_finite
 
 end
 
-end UnifiedRounding
+end Coalgebra

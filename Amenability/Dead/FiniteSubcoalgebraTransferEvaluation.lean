@@ -3,10 +3,10 @@ Copyright (c) 2026 Laurent Bartholdi. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
-import Amenability.FiniteSubcoalgebraDualEmbedding
-import Amenability.SplitTensorTransferData
-import Amenability.PullbackTransferData
-import Amenability.CharacterRepresentativeGroupLike
+import Amenability.Dead.FiniteSubcoalgebraDualEmbedding
+import Amenability.Dead.SplitTensorTransferData
+import Amenability.Dead.PullbackTransferData
+import Amenability.Dead.CharacterRepresentativeGroupLike
 import Mathlib.LinearAlgebra.Dual.Lemmas
 import Mathlib.RingTheory.HopfAlgebra.GroupLike
 
@@ -26,7 +26,7 @@ multiplication by the coefficient representative `f_i`.
 
 open Coalgebra Module TensorProduct WithConv
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 noncomputable section
 
@@ -273,4 +273,4 @@ end SplitDualFiltration
 
 end
 
-end UnifiedRounding
+end HopfAmenability

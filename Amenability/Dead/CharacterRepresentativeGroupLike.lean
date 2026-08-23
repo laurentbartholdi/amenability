@@ -3,8 +3,8 @@ Copyright (c) 2026 Laurent Bartholdi. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
-import Amenability.SplitDualRepresentatives
-import Amenability.DualTensorAlgebra
+import Amenability.Dead.SplitDualRepresentatives
+import Amenability.Dead.DualTensorAlgebra
 import Mathlib.RingTheory.Coalgebra.GroupLike
 import Mathlib.RingTheory.HopfAlgebra.GroupLike
 
@@ -14,7 +14,7 @@ import Mathlib.RingTheory.HopfAlgebra.GroupLike
 
 open Coalgebra Module TensorProduct WithConv
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 noncomputable section
 
@@ -105,4 +105,4 @@ end SplitDualFiltration
 
 end
 
-end UnifiedRounding
+end HopfAmenability

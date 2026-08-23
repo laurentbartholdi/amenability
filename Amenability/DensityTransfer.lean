@@ -27,7 +27,7 @@ largest-maximizer property gives `C ≤ D`.
 
 open Module
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v
 
@@ -176,4 +176,4 @@ theorem le_densitySubspace_of_transfer
     (densitySubspace_isLargestMaximizer 𝓛 E t)
     hC hUE hUC htransfer
 
-end UnifiedRounding
+end HopfAmenability

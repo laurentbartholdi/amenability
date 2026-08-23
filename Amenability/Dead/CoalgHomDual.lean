@@ -18,7 +18,7 @@ the dual algebra homomorphism is injective.
 
 open Coalgebra WithConv
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v w
 
@@ -108,4 +108,4 @@ end Algebra
 
 end CoalgHom
 
-end UnifiedRounding
+end HopfAmenability

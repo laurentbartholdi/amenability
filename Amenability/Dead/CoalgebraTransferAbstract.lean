@@ -3,8 +3,8 @@ Copyright (c) 2026 Laurent Bartholdi. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
-import Amenability.IdealCoannihilator
-import Amenability.TransferInequality
+import Amenability.Dead.IdealCoannihilator
+import Amenability.Dead.TransferInequality
 
 /-!
 # Abstract coalgebraic transfer theorem
@@ -29,7 +29,7 @@ t (dim V - dim D) ≤ dim W - dim(W ∩ D).
 
 open Module WithConv
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 noncomputable section
 
@@ -159,4 +159,4 @@ theorem coalgebra_transfer
 
 end
 
-end UnifiedRounding
+end HopfAmenability

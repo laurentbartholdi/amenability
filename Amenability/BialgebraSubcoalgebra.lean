@@ -20,7 +20,7 @@ subcoalgebra.
 
 open scoped TensorProduct
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v
 
@@ -92,4 +92,4 @@ theorem subcoalgebra_mul_mono
     F * C ≤ F' * C' :=
   Submodule.smul_mono hFF' hCC'
 
-end UnifiedRounding
+end HopfAmenability

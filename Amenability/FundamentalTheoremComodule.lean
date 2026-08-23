@@ -71,6 +71,8 @@ theorem linearIndependentCoordinate_apply
   · have hji : j ≠ i := Ne.symm hij
     simp [hij, hji]
 
+namespace RightComodule
+
 /-- Every element of a right comodule lies in a finite-dimensional right
 subcomodule. -/
 theorem exists_finiteDimensional_rightSubcomodule (m : M) :
@@ -191,5 +193,7 @@ theorem exists_finiteDimensional_rightSubcomodule_of_submodule
       _ = (y : M) := congrArg ((↑) : E → M) hy
   rw [hcoe] at hsum
   exact hsum
+
+end RightComodule
 
 end

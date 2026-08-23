@@ -9,7 +9,7 @@ import Mathlib.LinearAlgebra.Dimension.Finrank
 # Ergonomic finrank notation for submodules
 -/
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 /-- The finrank of a submodule, with the scalar field explicit and the
 ambient module inferred from the submodule argument. -/
@@ -27,4 +27,4 @@ theorem sfinrank_eq
     sfinrank k P = Module.finrank k P :=
   rfl
 
-end UnifiedRounding
+end HopfAmenability

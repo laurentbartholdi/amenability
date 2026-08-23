@@ -3,7 +3,7 @@ Copyright (c) 2026 Laurent Bartholdi. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
-import Amenability.CoalgHomDual
+import Amenability.Dead.CoalgHomDual
 import Mathlib.LinearAlgebra.Contraction
 import Mathlib.RingTheory.Coalgebra.TensorProduct
 import Mathlib.RingTheory.TensorProduct.Basic
@@ -24,7 +24,7 @@ composition as the multiplication on dual linear maps.
 open Coalgebra TensorProduct WithConv
 open scoped TensorProduct
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v w
 
@@ -171,4 +171,4 @@ theorem convDualDistribAlgEquiv_tmul_apply
       φ c * ψ d :=
   rfl
 
-end UnifiedRounding
+end HopfAmenability

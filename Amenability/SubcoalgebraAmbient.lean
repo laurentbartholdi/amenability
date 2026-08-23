@@ -16,7 +16,7 @@ subcoalgebra predicate across that equivalence.
 
 open Coalgebra Module TensorProduct
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 noncomputable section
 
@@ -127,4 +127,4 @@ noncomputable def finiteSubcoalgebraOfAmbientImage
 
 end
 
-end UnifiedRounding
+end HopfAmenability

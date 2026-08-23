@@ -3,7 +3,7 @@ Copyright (c) 2026 Laurent Bartholdi. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
-import Amenability.SplitDual
+import Amenability.Dead.SplitDual
 import Mathlib.RingTheory.FiniteLength
 import Mathlib.LinearAlgebra.FiniteDimensional.Basic
 
@@ -13,7 +13,7 @@ import Mathlib.LinearAlgebra.FiniteDimensional.Basic
 
 open Module
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 noncomputable section
 
@@ -189,4 +189,4 @@ theorem exists_splitDualFiltration_of_simple_finrank_one
 
 end
 
-end UnifiedRounding
+end HopfAmenability

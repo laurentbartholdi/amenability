@@ -14,7 +14,7 @@ import Mathlib.FieldTheory.Tower
 
 open Module TensorProduct
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 noncomputable section
 
@@ -315,4 +315,4 @@ theorem semistable_baseChange
 
 end
 
-end UnifiedRounding
+end HopfAmenability

@@ -13,7 +13,7 @@ import Mathlib.RingTheory.Coalgebra.TensorProduct
 
 open Coalgebra LinearMap TensorProduct
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v w
 
@@ -93,4 +93,4 @@ theorem coe_codRestrictSubcoalgebra
 
 end CoalgHom
 
-end UnifiedRounding
+end HopfAmenability

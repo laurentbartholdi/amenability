@@ -19,7 +19,7 @@ import Mathlib.RingTheory.HopfAlgebra.TensorProduct
 
 open Coalgebra Module Polynomial TensorProduct
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 noncomputable section
 
@@ -386,4 +386,4 @@ end AmbientHopf
 
 end
 
-end UnifiedRounding
+end HopfAmenability

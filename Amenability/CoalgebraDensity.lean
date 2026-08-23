@@ -24,7 +24,7 @@ explicit hypothesis `hInf`.  A later file will discharge it.
 
 open Module
 
-namespace UnifiedRounding
+namespace HopfAmenability
 
 universe u v
 
@@ -146,4 +146,4 @@ theorem coalgebraDensitySubspace_semistable
   exact densitySubspace_semistable
     (subcoalgebraAdmissibleFamily G hInf) E t hB
 
-end UnifiedRounding
+end HopfAmenability
