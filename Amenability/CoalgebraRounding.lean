@@ -22,10 +22,12 @@ variable {k : Type u} {H : Type v}
 variable [Field k] [Ring H] [HopfAlgebra k H]
 variable [Coalgebra.IsCocomm k H]
 
-/-- The global finite-subcoalgebra rounding theorem. -/
+/-- The global finite-subcoalgebra rounding theorem. Its proof uses a finite
+scalar extension, simultaneous triangularization of coefficient operators,
+primal codimension-one transfer, and scalar-extension invariance of
+semistability. -/
 theorem exists_finiteSubcoalgebra_ratio_le
     (F : FiniteSubcoalgebra k H)
-    (S : SplitDualFiltration k F.Dual)
     (E : Submodule k H)
     [FiniteDimensional k E]
     (hE : E ≠ ⊥) :
@@ -36,7 +38,7 @@ theorem exists_finiteSubcoalgebra_ratio_le
           (finrank k (F.carrier * E) : ℚ) /
             (finrank k E : ℚ) := by
   obtain ⟨G, hEG⟩ := exists_finiteSubcoalgebra_containing_submodule E
-  exact exists_finiteSubcoalgebra_ratio_le_of_le F S E hE G hEG
+  exact exists_finiteSubcoalgebra_ratio_le_of_le F E hE G hEG
 
 end
 

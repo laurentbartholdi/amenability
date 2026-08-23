@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
 import Amenability.DensityRounding
-import Amenability.DensityProductTransfer
+import Amenability.DensityProductTransferPrimal
 import Amenability.SubcoalgebraAmbient
 
 /-!
@@ -32,7 +32,6 @@ subcoalgebra.
 -/
 theorem exists_finiteSubcoalgebra_ratio_le_internal
     (F : FiniteSubcoalgebra k H)
-    (S : SplitDualFiltration k F.Dual)
     (G : FiniteSubcoalgebra k H)
     (E : Submodule k G.carrier)
     (hE : E ≠ ⊥) :
@@ -88,7 +87,7 @@ theorem exists_finiteSubcoalgebra_ratio_le_internal
   have hb_le : ∀ t : ℚ, 0 ≤ t → t ≤ 1 →
       b t ≤ finrank k (densitySubspace targetFamily FE t) := by
     intro t ht0 ht1
-    have hle := mul_subcoalgebraDensitySubspace_le F S G.carrier E t
+    have hle := mul_subcoalgebraDensitySubspace_le_primal F G.carrier E t
     let FCt : Submodule k H := F.carrier * ambientImage G.carrier
       (subcoalgebraDensitySubspace G.carrier E t)
     have hFCtFG : FCt ≤ FG := by
@@ -148,7 +147,6 @@ is placed in a finite subcoalgebra.
 -/
 theorem exists_finiteSubcoalgebra_ratio_le_of_le
     (F : FiniteSubcoalgebra k H)
-    (S : SplitDualFiltration k F.Dual)
     (E : Submodule k H)
     [FiniteDimensional k E]
     (hE : E ≠ ⊥)
@@ -168,7 +166,7 @@ theorem exists_finiteSubcoalgebra_ratio_le_of_le
     apply hE
     rw [← hEintImage, hbot, ambientImage_bot]
   obtain ⟨C, hC, hratio⟩ :=
-    exists_finiteSubcoalgebra_ratio_le_internal F S G Eint hEint
+    exists_finiteSubcoalgebra_ratio_le_internal F G Eint hEint
   refine ⟨C, hC, ?_⟩
   have hdimE : finrank k E = finrank k Eint := by
     calc
