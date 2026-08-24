@@ -6,6 +6,7 @@ Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 import Amenability.HopfModuleCoalgebra
 import Amenability.FiniteSubcoalgebra
 import Amenability.CompleteSubcoalgebraFlag
+import Amenability.SubcoalgebraCoalgHom
 import Mathlib.LinearAlgebra.TensorProduct.Finiteness
 
 /-!
@@ -59,6 +60,18 @@ theorem actionSubspace_mono_right (F : Submodule k H)
   rw [actionSubspace_eq_map₂, actionSubspace_eq_map₂]
   exact Submodule.map₂_le_map₂_right h
 
+@[simp]
+theorem actionSubspace_bot_left (E : Submodule k M) :
+    actionSubspace (⊥ : Submodule k H) E = ⊥ := by
+  rw [actionSubspace_eq_map₂]
+  simp
+
+@[simp]
+theorem actionSubspace_bot_right (F : Submodule k H) :
+    actionSubspace F (⊥ : Submodule k M) = ⊥ := by
+  rw [actionSubspace_eq_map₂]
+  simp
+
 theorem product_mem_actionSubspace
     {F : Submodule k H} {E : Submodule k M}
     {h : H} (hh : h ∈ F) {m : M} (hm : m ∈ E) :
@@ -87,14 +100,15 @@ theorem IsSubcoalgebra.actionSubspace
     {F : Submodule k H} (hF : IsSubcoalgebra (k := k) F)
     {C : Submodule k M} (hC : IsSubcoalgebra (k := k) C) :
     IsSubcoalgebra (k := k) (actionSubspace F C) := by
-  let hFcoal := subcoalgebraCoalgebra F hF
-  let hCcoal := subcoalgebraCoalgebra C hC
+  let := subcoalgebraCoalgebra F hF
+  let := subcoalgebraCoalgebra C hC
   let incl : F ⊗[k] C →ₗc[k] H ⊗[k] M :=
     CoalgHom.tensorMapStruct
       (subcoalgebraInclusion F hF) (subcoalgebraInclusion C hC)
   let act : F ⊗[k] C →ₗc[k] M :=
     hopfModuleActionCoalgHom.comp incl
-  have htop : IsSubcoalgebra (k := k) (⊤ : Submodule k (F ⊗[k] C)) := by
+  have htop : IsSubcoalgebra (k := k) (H := F ⊗[k] C)
+      (⊤ : Submodule k (F ⊗[k] C)) := by
     intro x hx
     let i : F ⊗[k] C →ₗ[k] (⊤ : Submodule k (F ⊗[k] C)) :=
       LinearMap.codRestrict ⊤ LinearMap.id (fun _ => trivial)
@@ -126,6 +140,36 @@ def FiniteSubcoalgebra.act
   carrier := actionSubspace F.carrier C.carrier
   isSubcoalgebra := F.isSubcoalgebra.actionSubspace C.isSubcoalgebra
   finiteDimensional := finiteDimensional_actionSubspace F.carrier C.carrier
+
+/-- The ambient Hopf action restricted to finite subcoalgebras. -/
+noncomputable def FiniteSubcoalgebra.ambientActCoalgHom
+    (F : FiniteSubcoalgebra k H) (C : FiniteSubcoalgebra k M) :
+    F.carrier ⊗[k] C.carrier →ₗc[k] M :=
+  hopfModuleActionCoalgHom.comp
+    (CoalgHom.tensorMapStruct
+      (subcoalgebraInclusion F.carrier F.isSubcoalgebra)
+      (subcoalgebraInclusion C.carrier C.isSubcoalgebra))
+
+@[simp]
+theorem FiniteSubcoalgebra.ambientActCoalgHom_tmul
+    (F : FiniteSubcoalgebra k H) (C : FiniteSubcoalgebra k M)
+    (f : F.carrier) (c : C.carrier) :
+    F.ambientActCoalgHom C (f ⊗ₜ[k] c) = (f : H) • (c : M) := rfl
+
+/-- The Hopf action with codomain restricted to its image subcoalgebra. -/
+noncomputable def FiniteSubcoalgebra.actCoalgHom
+    (F : FiniteSubcoalgebra k H) (C : FiniteSubcoalgebra k M) :
+    F.carrier ⊗[k] C.carrier →ₗc[k] (F.act C).carrier :=
+  CoalgHom.codRestrictSubcoalgebra
+    (F.ambientActCoalgHom C) (F.act C).carrier (F.act C).isSubcoalgebra
+    (fun z => ⟨z, rfl⟩)
+
+@[simp]
+theorem FiniteSubcoalgebra.actCoalgHom_tmul
+    (F : FiniteSubcoalgebra k H) (C : FiniteSubcoalgebra k M)
+    (f : F.carrier) (c : C.carrier) :
+    F.actCoalgHom C (f ⊗ₜ[k] c) =
+      ⟨(f : H) • (c : M), product_mem_actionSubspace f.2 c.2⟩ := rfl
 
 @[simp]
 theorem FiniteSubcoalgebra.act_carrier

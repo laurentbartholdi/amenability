@@ -83,8 +83,8 @@ theorem exists_finiteSubcoalgebra_coaction_of_rightSubcomodule
     let fl : M →ₗ[k] k :=
       linearIndependentCoordinate (fun i : I => (e i : M)) heIndependent l
     have hcontract :=
-      congrArg (HopfAmenability.TensorProduct.leftContract fl) hcoassoc
-    simp only [map_sum, HopfAmenability.TensorProduct.leftContract_tmul] at hcontract
+      congrArg (TensorProduct.leftContract fl) hcoassoc
+    simp only [map_sum, TensorProduct.leftContract_tmul] at hcontract
     simpa [fl, linearIndependentCoordinate_apply] using hcontract.symm
   let D0 : Submodule k C :=
     Submodule.span k (Set.range fun p : I × I => coeff p.1 p.2)

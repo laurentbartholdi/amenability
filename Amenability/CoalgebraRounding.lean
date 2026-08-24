@@ -3,8 +3,7 @@ Copyright (c) 2026 Laurent Bartholdi. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
-import Amenability.CoalgebraRoundingFinite
-import Amenability.FundamentalTheoremCoalgebra
+import Amenability.HopfModuleCoalgebraRounding
 
 /-!
 # Global coalgebraic rounding
@@ -37,9 +36,9 @@ theorem exists_finiteSubcoalgebra_ratio_le
             (finrank k C.carrier : ℚ) ≤
           (finrank k (F.carrier * E) : ℚ) /
             (finrank k E : ℚ) := by
-  obtain ⟨G, hEG⟩ :=
-    Coalgebra.exists_finiteSubcoalgebra_containing_submodule E
-  exact exists_finiteSubcoalgebra_ratio_le_of_le F E hE G hEG
+  simpa only [actionSubspace_regular_eq_mul] using
+    (exists_finiteSubcoalgebra_action_ratio_le
+      (k := k) (H := H) (M := H) F E hE)
 
 end
 

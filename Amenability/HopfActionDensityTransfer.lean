@@ -3,11 +3,11 @@ Copyright (c) 2026 Laurent Bartholdi. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
-import Amenability.LieFlagTransfer
+import Amenability.HopfActionTransfer
 import Amenability.CoalgebraDensityTransfer
 
 /-!
-# Functoriality of the density filtration under Lie expansion
+# Functoriality of the density filtration under a Hopf action
 -/
 
 open Coalgebra Module
@@ -18,48 +18,50 @@ noncomputable section
 
 universe u v w
 
-variable {k : Type u} {L : Type v} {M : Type w}
-variable [Field k]
-variable [LieRing L] [LieAlgebra k L]
+variable {k : Type u} {H : Type v} {M : Type w}
+variable [Field k] [Ring H] [HopfAlgebra k H]
+variable [Coalgebra.IsCocomm k H]
 variable [AddCommGroup M] [Module k M]
-variable [LieRingModule L M] [LieModule k L M]
-variable [Coalgebra k M] [Coalgebra.IsLieModuleCoalgebra k L M]
+variable [Module H M] [IsScalarTower k H M]
+variable [Coalgebra k M] [IsHopfModuleCoalgebra k H M]
 
-/-- Lie expansion carries a density subcoalgebra into the corresponding
+/-- A Hopf action carries a density subcoalgebra into the corresponding
 density subcoalgebra in the expanded ambient space. -/
-theorem lieExpansion_subcoalgebraDensitySubspace_le
-    (F : Submodule k L) [FiniteDimensional k F]
+theorem actionSubspace_subcoalgebraDensitySubspace_le
+    (F : FiniteSubcoalgebra k H)
     (G : Submodule k M) [FiniteDimensional k G]
     (E : Submodule k G) (t : ℚ) :
-    lieExpansion F
+    actionSubspace F.carrier
         (ambientImage G (subcoalgebraDensitySubspace G E t)) ≤
-      ambientImage (lieExpansion F G)
-        (subcoalgebraDensitySubspace (lieExpansion F G)
-          ((lieExpansion F (ambientImage G E)).comap
-            (lieExpansion F G).subtype) t) := by
+      ambientImage (actionSubspace F.carrier G)
+        (subcoalgebraDensitySubspace (actionSubspace F.carrier G)
+          ((actionSubspace F.carrier (ambientImage G E)).comap
+            (actionSubspace F.carrier G).subtype) t) := by
   let Ct : Submodule k G := subcoalgebraDensitySubspace G E t
   let Camb : Submodule k M := ambientImage G Ct
   have hCamb : IsSubcoalgebra (k := k) Camb :=
     subcoalgebraDensitySubspace_isSubcoalgebra G E t
   let Cfin : FiniteSubcoalgebra k M :=
     finiteSubcoalgebraOfAmbientImage G Ct hCamb
-  let FG : Submodule k M := lieExpansion F G
-  let : FiniteDimensional k FG := finiteDimensional_lieExpansion F G
+  let FG : Submodule k M := actionSubspace F.carrier G
+  let : FiniteDimensional k FG :=
+    finiteDimensional_actionSubspace (k := k) (H := H) (M := M) F.carrier G
   let FE : Submodule k FG :=
-    (lieExpansion F (ambientImage G E)).comap FG.subtype
+    (actionSubspace F.carrier (ambientImage G E)).comap FG.subtype
   let Dt : Submodule k FG := subcoalgebraDensitySubspace FG FE t
   let FCt : Submodule k FG :=
-    (lieExpansion F Camb).comap FG.subtype
+    (actionSubspace F.carrier Camb).comap FG.subtype
   have hCambG : Camb ≤ G := by
     rintro x ⟨y, -, rfl⟩
     exact y.2
-  have hFCtFG : lieExpansion F Camb ≤ FG :=
-    lieExpansion_mono_right F hCambG
-  have hFCtImage : ambientImage FG FCt = lieExpansion F Camb :=
-    ambientImage_comap_eq_of_le FG (lieExpansion F Camb) hFCtFG
+  have hFCtFG : actionSubspace F.carrier Camb ≤ FG :=
+    actionSubspace_mono_right F.carrier hCambG
+  have hFCtImage : ambientImage FG FCt = actionSubspace F.carrier Camb :=
+    ambientImage_comap_eq_of_le FG (actionSubspace F.carrier Camb) hFCtFG
   have hFCt : IsSubcoalgebra (k := k) (ambientImage FG FCt) := by
     rw [hFCtImage]
-    exact hCamb.lieExpansion F
+    exact IsSubcoalgebra.actionSubspace (k := k) (H := H) (M := M)
+      F.isSubcoalgebra hCamb
   let Uamb : Submodule k M := ambientImage G (E ⊓ Ct)
   have hUambCamb : Uamb ≤ Camb := Submodule.map_mono inf_le_right
   let U : Submodule k Cfin.carrier := Uamb.comap Cfin.carrier.subtype
@@ -128,30 +130,30 @@ theorem lieExpansion_subcoalgebraDensitySubspace_le
     unfold sfinrank at hdimU hdimUB ⊢
     rw [hdimC, hdimB, hdimU, hdimUB]
     exact hs
-  let Wamb : Submodule k M := lieExpansion F Uamb
+  let Wamb : Submodule k M := actionSubspace F.carrier Uamb
   let W : Submodule k FG := Wamb.comap FG.subtype
   have hWFG : Wamb ≤ FG :=
-    lieExpansion_mono_right F (hUambCamb.trans hCambG)
+    actionSubspace_mono_right F.carrier (hUambCamb.trans hCambG)
   have hWimage : ambientImage FG W = Wamb :=
     ambientImage_comap_eq_of_le FG Wamb hWFG
   have hWFCt : W ≤ FCt := by
     intro x hx
-    change (x : M) ∈ lieExpansion F Camb
+    change (x : M) ∈ actionSubspace F.carrier Camb
     have hx' : (x : M) ∈ ambientImage FG W := ⟨x, hx, rfl⟩
     rw [hWimage] at hx'
-    exact lieExpansion_mono_right F hUambCamb hx'
+    exact actionSubspace_mono_right F.carrier hUambCamb hx'
   have hWFE : W ≤ FE := by
     intro x hx
-    change (x : M) ∈ lieExpansion F (ambientImage G E)
+    change (x : M) ∈ actionSubspace F.carrier (ambientImage G E)
     have hx' : (x : M) ∈ ambientImage FG W := ⟨x, hx, rfl⟩
     rw [hWimage] at hx'
-    exact lieExpansion_mono_right F (Submodule.map_mono inf_le_left) hx'
+    exact actionSubspace_mono_right F.carrier (Submodule.map_mono inf_le_left) hx'
   rw [← hFCtImage]
   apply Submodule.map_mono
   apply le_subcoalgebraDensitySubspace_of_transfer FG t hFCt hWFE hWFCt
   let Damb : Submodule k M := ambientImage FG (FCt ⊓ Dt)
-  have hDambFC : Damb ≤ lieExpansion F Cfin.carrier := by
-    change ambientImage FG (FCt ⊓ Dt) ≤ lieExpansion F Camb
+  have hDambFC : Damb ≤ actionSubspace F.carrier Cfin.carrier := by
+    change ambientImage FG (FCt ⊓ Dt) ≤ actionSubspace F.carrier Camb
     rw [ambientImage_inf, hFCtImage]
     exact inf_le_left
   have hDamb : IsSubcoalgebra (k := k) Damb := by
@@ -159,15 +161,15 @@ theorem lieExpansion_subcoalgebraDensitySubspace_le
     rw [ambientImage_inf]
     exact hFCt.inf_of_tensorSquareIntersection tensorSquareIntersectionProperty
       (subcoalgebraDensitySubspace_isSubcoalgebra FG FE t)
-  have htransfer := lie_transfer_ambient F Cfin U Damb hDambFC hDamb t hsem
+  have htransfer := finiteSubcoalgebra_action_transfer_ambient F Cfin U Damb hDambFC hDamb t hsem
   rw [hUimage] at htransfer
   have hWintersection : Wamb ⊓ Damb =
       ambientImage FG (W ⊓ (FCt ⊓ Dt)) := by
     rw [← hWimage]
     change ambientImage FG W ⊓ ambientImage FG (FCt ⊓ Dt) = _
     rw [← ambientImage_inf]
-  have hdimFC : sfinrank k (lieExpansion F Cfin.carrier) = finrank k FCt := by
-    change finrank k (lieExpansion F Camb) = finrank k FCt
+  have hdimFC : sfinrank k (actionSubspace F.carrier Cfin.carrier) = finrank k FCt := by
+    change finrank k (actionSubspace F.carrier Camb) = finrank k FCt
     rw [← hFCtImage]
     exact finrank_ambientImage FG FCt
   have hdimD : finrank k Damb = sfinrank k (FCt ⊓ Dt) :=

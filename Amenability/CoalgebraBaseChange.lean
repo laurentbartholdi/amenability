@@ -159,6 +159,38 @@ theorem cancelBaseChange_comul_eq_coaction (z : K ⊗[k] C) :
           simp [CommSemiring.comul_apply, smul_tmul', smul_eq_mul]
 
 omit [FiniteDimensional k K] in
+/-- The scalar-extension comultiplication, with its two output factors
+exchanged, corresponds to the standard left coaction after cancelling the
+middle scalar extension. -/
+noncomputable def cancelBaseChangeLeft :
+    (K ⊗[k] C) ⊗[K] (K ⊗[k] C) →ₗ[k] C ⊗[k] (K ⊗[k] C) :=
+  (_root_.TensorProduct.comm k (K ⊗[k] C) C).toLinearMap.comp
+    ((TensorProduct.AlgebraTensorModule.cancelBaseChange
+      k K K (K ⊗[k] C) C).toLinearMap.restrictScalars k |>.comp
+        ((_root_.TensorProduct.comm K (K ⊗[k] C) (K ⊗[k] C)).toLinearMap.restrictScalars k))
+
+omit [FiniteDimensional k K] in
+theorem cancelBaseChangeLeft_comul_eq_coaction (z : K ⊗[k] C) :
+    cancelBaseChangeLeft (k := k) (K := K) (C := C)
+        (Coalgebra.comul (R := K) (A := K ⊗[k] C) z) =
+      Coalgebra.tensorLeftCoaction (k := k) (C := C) (W := K) z := by
+  induction z using TensorProduct.induction_on with
+  | zero => simp [cancelBaseChangeLeft]
+  | add z z' hz hz' =>
+      simpa only [map_add] using congrArg₂ (fun x y => x + y) hz hz'
+  | tmul a c =>
+      rw [Coalgebra.tensorLeftCoaction_tmul]
+      rw [TensorProduct.comul_tmul]
+      generalize hq : Coalgebra.comul (R := k) (A := C) c = q
+      clear hq c
+      induction q using TensorProduct.induction_on with
+      | zero => simp [cancelBaseChangeLeft]
+      | add q q' hq hq' =>
+          simpa only [tmul_add, map_add] using congrArg₂ (fun x y => x + y) hq hq'
+      | tmul c₁ c₂ =>
+          simp [cancelBaseChangeLeft, CommSemiring.comul_apply]
+
+omit [FiniteDimensional k K] in
 /-- A subcoalgebra after scalar extension is a right subcomodule after
 restricting scalars to the original field. -/
 theorem restrictScalars_isRightSubcomodule_of_isSubcoalgebra
@@ -191,6 +223,41 @@ theorem restrictScalars_isRightSubcomodule_of_isSubcoalgebra
       rw [map_add, map_add]
       exact (LinearMap.range
         ((Z.restrictScalars k).subtype.rTensor C)).add_mem hq hq'
+  | tmul z₁ z₂ => exact hpure z₁ z₂
+
+omit [FiniteDimensional k K] in
+/-- A subcoalgebra after scalar extension is a left subcomodule after
+restricting scalars to the original field. -/
+theorem restrictScalars_isTensorLeftSubcomodule_of_isSubcoalgebra
+    (Z : Submodule K (K ⊗[k] C))
+    (hZ : IsSubcoalgebra (k := K) Z) :
+    Coalgebra.IsTensorLeftSubcomodule
+      (k := k) (C := C) (Z.restrictScalars k) := by
+  intro z hz
+  rcases hZ hz with ⟨q, hq⟩
+  rw [← cancelBaseChangeLeft_comul_eq_coaction z, ← hq]
+  have hpure : ∀ (x : K ⊗[k] C) (z₂ : Z),
+      cancelBaseChangeLeft (k := k) (K := K) (C := C)
+          (x ⊗ₜ[K] (z₂ : K ⊗[k] C)) ∈
+        LinearMap.range ((Z.restrictScalars k).subtype.lTensor C) := by
+    intro x z₂
+    induction x using TensorProduct.induction_on with
+    | zero => exact ⟨0, by simp [cancelBaseChangeLeft]⟩
+    | add x x' hx hx' =>
+        rw [add_tmul, map_add]
+        exact (LinearMap.range
+          ((Z.restrictScalars k).subtype.lTensor C)).add_mem hx hx'
+    | tmul a c =>
+        refine ⟨c ⊗ₜ[k] (⟨a • z₂, Z.smul_mem a z₂.2⟩ :
+            Z.restrictScalars k), ?_⟩
+        simp [cancelBaseChangeLeft]
+  clear hq
+  induction q using TensorProduct.induction_on with
+  | zero => exact ⟨0, by simp [cancelBaseChangeLeft]⟩
+  | add q q' hq hq' =>
+      rw [map_add, map_add]
+      exact (LinearMap.range
+        ((Z.restrictScalars k).subtype.lTensor C)).add_mem hq hq'
   | tmul z₁ z₂ => exact hpure z₁ z₂
 
 omit [FiniteDimensional k K] in
@@ -258,7 +325,6 @@ theorem isSubcoalgebra_baseChangeSubspace
 
 /-- Semistability survives a finite extension of the base field. -/
 theorem semistable_baseChange
-    [Coalgebra.IsCocomm k C]
     [FiniteDimensional k C]
     (U : Submodule k C) (t : ℚ)
     (hsem : ∀ B : Submodule k C,
@@ -274,7 +340,10 @@ theorem semistable_baseChange
   let Zk := Z.restrictScalars k
   have hZk : IsRightSubcomodule (k := k) (C := C) Zk :=
     restrictScalars_isRightSubcomodule_of_isSubcoalgebra Z hZ
-  have htensor := tensor_semistable (W := K) U t hsem Zk hZk
+  have hZkleft : Coalgebra.IsTensorLeftSubcomodule
+      (k := k) (C := C) Zk :=
+    restrictScalars_isTensorLeftSubcomodule_of_isSubcoalgebra Z hZ
+  have htensor := tensor_semistable (W := K) U t hsem Zk hZk hZkleft
   have hZdim :
       sfinrank k Zk = finrank k K * sfinrank K Z :=
     sfinrank_restrictScalars Z

@@ -1,5 +1,35 @@
 # Coalgebraic rounding theorem — Lean handoff
 
+## Current public architecture
+
+The main proof now works directly for a cocommutative Hopf algebra acting on
+an arbitrary Hopf-module coalgebra.  Its public endpoint is
+`HopfAmenability.exists_finiteSubcoalgebra_action_ratio_le` in
+`HopfModuleCoalgebraRounding.lean`.  The regular action on the Hopf algebra is
+the short corollary `HopfAmenability.exists_finiteSubcoalgebra_ratio_le` in
+`CoalgebraRounding.lean`.
+
+The two opt-in specializations are deliberately outside the generic import
+chain:
+
+- `LieAmenability.lean` supplies the universal-enveloping-algebra action and
+  proves `isAmenableLieModule_iff_hasFolnerSubspaces`;
+- `GroupAmenability.lean` supplies the linearized group action and proves
+  `isAmenableGroupAction_iff_hasFolnerSubspaces`, whose group-specific linear
+  condition is named `HasGroupFolnerSubspaces` in parallel with
+  `HasLieFolnerSubspaces`.
+
+The standard coalgebra, cocommutativity, bialgebra, and Hopf instances for a
+universal enveloping algebra are isolated in
+`UniversalEnvelopingCoalgebra.lean`, under `namespace Coalgebra`, so that the
+file can serve as a future Mathlib contribution.  Generic tensor helpers live
+in `TensorProductMap.lean` and `TensorContraction.lean` under the appropriate
+generic namespaces.
+
+The sections below document the older dual proof and remain useful as
+historical implementation notes.  That proof is retained under
+`Amenability/Dead` and is not part of the current main dependency chain.
+
 ## Namespace convention
 
 Generic coalgebra, comodule, and subcoalgebra infrastructure belongs in

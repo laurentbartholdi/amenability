@@ -257,7 +257,7 @@ end Algebra
 
 namespace FiniteSubcoalgebra
 
-variable [FiniteDimensional k K] [Coalgebra.IsCocomm k H]
+variable [FiniteDimensional k K]
 
 /-- Semistability transported to the carrier of a base-changed finite subcoalgebra. -/
 theorem semistable_baseChange

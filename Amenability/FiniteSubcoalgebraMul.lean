@@ -78,6 +78,8 @@ noncomputable def mulCoalgHom
     (F C : FiniteSubcoalgebra k H) :
     F.carrier ⊗[k] C.carrier →ₗc[k] (mul F C).carrier :=
   CoalgHom.codRestrictSubcoalgebra
+    (X := F.carrier ⊗[k] C.carrier)
+    (H := H)
     (ambientMulCoalgHom F C)
     (mul F C).carrier
     (mul F C).isSubcoalgebra

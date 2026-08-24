@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
 import Amenability.RightCoideal
+import Amenability.TwoSidedCoideal
 import Amenability.TensorRightComodule
 
 /-!
@@ -11,6 +12,88 @@ import Amenability.TensorRightComodule
 -/
 
 open Module TensorProduct
+
+namespace Coalgebra
+
+noncomputable section
+
+universe u v w
+
+variable {k : Type u} {C : Type v} {W : Type w}
+variable [Field k]
+variable [AddCommGroup C] [Module k C] [Coalgebra k C]
+variable [AddCommGroup W] [Module k W]
+
+/-- The left coaction on a tensor copy of the regular coalgebra. -/
+noncomputable def tensorLeftCoaction :
+    W ⊗[k] C →ₗ[k] C ⊗[k] (W ⊗[k] C) :=
+  (_root_.TensorProduct.comm k (W ⊗[k] C) C).toLinearMap ∘ₗ
+    (_root_.TensorProduct.assoc k W C C).symm.toLinearMap ∘ₗ
+      ((_root_.TensorProduct.comm k C C).toLinearMap.lTensor W) ∘ₗ
+        (Coalgebra.comul (R := k) (A := C)).lTensor W
+
+/-- A subspace of `W ⊗ C` stable under the left regular coaction of `C`. -/
+def IsTensorLeftSubcomodule (Z : Submodule k (W ⊗[k] C)) : Prop :=
+  ∀ z, z ∈ Z → tensorLeftCoaction (k := k) (C := C) (W := W) z ∈
+    LinearMap.range (Z.subtype.lTensor C)
+
+@[simp]
+theorem tensorLeftCoaction_tmul (w : W) (c : C) :
+    tensorLeftCoaction (k := k) (C := C) (W := W) (w ⊗ₜ[k] c) =
+      (_root_.TensorProduct.comm k (W ⊗[k] C) C)
+        ((_root_.TensorProduct.assoc k W C C).symm
+          (w ⊗ₜ[k]
+            (_root_.TensorProduct.comm k C C)
+              (Coalgebra.comul (R := k) (A := C) c))) := rfl
+
+/-- Contracting the auxiliary tensor factor intertwines the left coaction
+with comultiplication. -/
+theorem comul_leftContract_eq
+    (ell : W →ₗ[k] k) (z : W ⊗[k] C) :
+    Coalgebra.comul (R := k) (A := C)
+        (TensorProduct.leftContract ell z) =
+      (TensorProduct.leftContract ell).lTensor C
+        (tensorLeftCoaction (k := k) (C := C) (W := W) z) := by
+  induction z using TensorProduct.induction_on with
+  | zero => simp
+  | add z z' hz hz' => simpa only [map_add] using congrArg₂ (fun x y => x + y) hz hz'
+  | tmul w c =>
+      simp only [TensorProduct.leftContract_tmul, map_smul]
+      rw [tensorLeftCoaction_tmul]
+      generalize hq : Coalgebra.comul (R := k) (A := C) c = q
+      clear hq c
+      induction q using TensorProduct.induction_on with
+      | zero => simp
+      | add q q' hq hq' =>
+          simpa only [map_add, smul_add, tmul_add] using
+            congrArg₂ (fun x y => x + y) hq hq'
+      | tmul c d =>
+          simp [TensorProduct.leftContract_tmul]
+
+/-- Inclusion of an auxiliary subspace intertwines the left coactions. -/
+theorem tensorLeftCoaction_rTensor
+    {L : Type*} [AddCommGroup L] [Module k L]
+    (i : L →ₗ[k] W) (z : L ⊗[k] C) :
+    tensorLeftCoaction (k := k) (C := C) (W := W) (i.rTensor C z) =
+      (i.rTensor C).lTensor C
+        (tensorLeftCoaction (k := k) (C := C) (W := L) z) := by
+  induction z using TensorProduct.induction_on with
+  | zero => simp
+  | add z z' hz hz' => simpa only [map_add] using congrArg₂ (fun x y => x + y) hz hz'
+  | tmul l c =>
+      simp only [LinearMap.rTensor_tmul]
+      rw [tensorLeftCoaction_tmul, tensorLeftCoaction_tmul]
+      generalize hq : Coalgebra.comul (R := k) (A := C) c = q
+      clear hq c
+      induction q using TensorProduct.induction_on with
+      | zero => simp
+      | add q q' hq hq' =>
+          simpa only [map_add, tmul_add] using congrArg₂ (fun x y => x + y) hq hq'
+      | tmul c d => rfl
+
+end
+
+end Coalgebra
 
 namespace HopfAmenability
 
@@ -21,7 +104,7 @@ universe u v w
 variable {k : Type u} {C : Type v} {W : Type w}
 variable [Field k]
 variable [AddCommGroup C] [Module k C] [Coalgebra k C]
-variable [Coalgebra.IsCocomm k C] [FiniteDimensional k C]
+variable [FiniteDimensional k C]
 variable [AddCommGroup W] [Module k W] [FiniteDimensional k W]
 
 /-- Coalgebra semistability is preserved after tensor amplification. -/
@@ -32,7 +115,8 @@ theorem tensor_semistable
       t * ((finrank k C : ℚ) - sfinrank k B) ≤
         (sfinrank k U : ℚ) - sfinrank k (U ⊓ B))
     (Z : Submodule k (W ⊗[k] C))
-    (hZ : IsRightSubcomodule (C := C) Z) :
+    (hZ : IsRightSubcomodule (C := C) Z)
+    (hZleft : Coalgebra.IsTensorLeftSubcomodule (k := k) (C := C) Z) :
     t * ((finrank k W : ℚ) * finrank k C - sfinrank k Z) ≤
       (finrank k W : ℚ) * sfinrank k U -
         sfinrank k (Z ⊓ tensorSubspace (k := k) W U) := by
@@ -79,10 +163,63 @@ theorem tensor_semistable
         rTensor_isRightComoduleMap L.subtype
       have hBcomodule : IsRightSubcomodule (C := C) B :=
         IsRightSubcomodule.map Z phi hZ hphiMap
+      have hBleft : Coalgebra.IsLeftCoideal B := by
+        intro b hb
+        rcases hb with ⟨z, hz, rfl⟩
+        rcases hZleft z hz with ⟨q, hq⟩
+        let phiB : Z →ₗ[k] B :=
+          LinearMap.codRestrict B (phi.comp Z.subtype) (fun z => ⟨z, z.2, rfl⟩)
+        refine ⟨phiB.lTensor C q, ?_⟩
+        have hnatural : ∀ q : C ⊗[k] Z,
+            (B.subtype.lTensor C) (phiB.lTensor C q) =
+              (phi.lTensor C) (Z.subtype.lTensor C q) := by
+          intro q
+          induction q using TensorProduct.induction_on with
+          | zero => simp
+          | add q q' hq hq' => simpa only [map_add] using congrArg₂ (fun x y => x + y) hq hq'
+          | tmul c z => rfl
+        rw [hnatural, hq]
+        exact (Coalgebra.comul_leftContract_eq ell z).symm
       have hBcoal : IsSubcoalgebra (k := k) B :=
-        isSubcoalgebra_of_isRightSubcomodule hBcomodule
+        Coalgebra.isSubcoalgebra_of_twoSidedCoideal hBcomodule hBleft
       have hZ0comodule : IsRightSubcomodule (C := C) Z0 :=
         IsRightSubcomodule.comap Z i hZ hiMap
+      have hZ0left : Coalgebra.IsTensorLeftSubcomodule
+          (k := k) (C := C) Z0 := by
+        intro x hx
+        let j : L ⊗[k] C →ₗ[k] (W ⊗[k] C) ⧸ Z := Z.mkQ.comp i
+        have hkerj : LinearMap.ker j = Z0 := by
+          ext y
+          rw [LinearMap.mem_ker]
+          change Z.mkQ (i y) = 0 ↔ i y ∈ Z
+          exact Submodule.Quotient.mk_eq_zero Z
+        rw [← hkerj]
+        have hexact := Module.Flat.lTensor_exact (R := k) C
+          (N := LinearMap.ker j) (N' := L ⊗[k] C)
+          (f := (LinearMap.ker j).subtype) (g := j)
+          (LinearMap.exact_subtype_ker_map j)
+        rw [← hexact.linearMap_ker_eq, LinearMap.mem_ker]
+        have hix : i x ∈ Z := hx
+        rcases hZleft (i x) hix with ⟨q, hq⟩
+        have hquot : (Z.mkQ.lTensor C)
+            (Coalgebra.tensorLeftCoaction (k := k) (C := C) (W := W) (i x)) = 0 := by
+          rw [← hq]
+          rw [← LinearMap.comp_apply, ← LinearMap.lTensor_comp]
+          have hcomp : Z.mkQ.comp Z.subtype = 0 := by
+            ext z
+            exact (Submodule.Quotient.mk_eq_zero Z).2 z.2
+          rw [hcomp, LinearMap.lTensor_zero, LinearMap.zero_apply]
+        have hjzero : (j.lTensor C)
+            (Coalgebra.tensorLeftCoaction (k := k) (C := C) (W := L) x) = 0 := by
+          change (Z.mkQ.lTensor C)
+              (Coalgebra.tensorLeftCoaction (k := k) (C := C) (W := W)
+                (L.subtype.rTensor C x)) = 0 at hquot
+          rw [Coalgebra.tensorLeftCoaction_rTensor L.subtype x] at hquot
+          change ((Z.mkQ.comp i).lTensor C)
+              (Coalgebra.tensorLeftCoaction (k := k) (C := C) (W := L) x) = 0
+          rw [LinearMap.lTensor_comp, LinearMap.comp_apply]
+          exact hquot
+        exact hjzero
       have hphiKer : LinearMap.ker phi = LinearMap.range i := by
         exact ker_leftContract_eq_range_rTensor ell a ha
       let : Module.Free k C := Module.Free.of_divisionRing k C
@@ -159,7 +296,7 @@ theorem tensor_semistable
           sfinrank k N ≤ sfinrank k N0 + sfinrank k (U ⊓ B) := by
         rw [hNrank]
         exact Nat.add_le_add_left (Submodule.finrank_mono hNmap) _
-      have hIH := ih (finrank k L) hLlt Z0 hZ0comodule rfl
+      have hIH := ih (finrank k L) hLlt Z0 hZ0comodule hZ0left rfl
       have hBsem := hsem B hBcoal
       have hZdimQ : (sfinrank k Z : ℚ) =
           sfinrank k Z0 + sfinrank k B := by exact_mod_cast hZdim
