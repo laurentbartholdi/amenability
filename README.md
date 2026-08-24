@@ -31,11 +31,19 @@ The theorem is proved under the assumptions
 [Field k] [Ring H] [HopfAlgebra k H] [Coalgebra.IsCocomm k H]
 ```
 
-The development includes the fundamental theorem of coalgebras via comodules
-(in the `Coalgebra` namespace),
-finite-dimensional density rounding, and a primal transfer argument based on
-codimension-one coalgebra steps. The final result is in
-`Amenability/CoalgebraRounding.lean`.
+The development includes the fundamental theorem of coalgebras via comodules,
+whose main reusable form is
+
+```lean
+theorem Coalgebra.exists_finiteSubcoalgebra_containing_submodule
+    (E : Submodule k C)
+    [FiniteDimensional k E] :
+    ∃ D : FiniteSubcoalgebra k C, E ≤ D.carrier
+```
+
+It also contains finite-dimensional density rounding and a primal transfer
+argument based on codimension-one coalgebra steps. The final Hopf-algebra
+result is in `Amenability/CoalgebraRounding.lean`.
 
 The earlier dual-transfer proof branch is retained for reference under
 `Amenability/Dead` but is not part of the dependency chain of the main theorem.
@@ -79,10 +87,29 @@ The assumptions are
 [Coalgebra k M] [Coalgebra.IsLieModuleCoalgebra k L M]
 ```
 
+`Coalgebra.IsLieModuleCoalgebra` only assumes compatibility of comultiplication
+with the Lie action. Compatibility with the counit is a theorem rather than an
+additional axiom:
+
+```lean
+theorem Coalgebra.counit_lie_apply (x : L) (m : M) :
+    Coalgebra.counit (R := k) (A := M) ⁅x, m⁆ = 0
+```
+
 For applications that want selected data rather than an existential
-proposition, the project also provides
-`HopfAmenability.lieRounding : LieRoundingResult F E`, together with
-`lieRounding_ne_bot` and `lieRounding_ratio_le`.
+proposition, the project also provides the structure
+`HopfAmenability.LieRoundingResult F E` and the choice
+
+```lean
+noncomputable def HopfAmenability.lieRounding
+    (F : Submodule k L) [FiniteDimensional k F]
+    (E : Submodule k M) [FiniteDimensional k E]
+    (hE : E ≠ ⊥) :
+    LieRoundingResult F E
+```
+
+The projection-style theorems `HopfAmenability.lieRounding_ne_bot` and
+`HopfAmenability.lieRounding_ratio_le` expose its two guarantees.
 
 Finally,
 `HopfAmenability.IsAmenableLieModule.exists_finiteSubcoalgebra_folner`
@@ -95,11 +122,16 @@ Hopf-algebra multiplication theorem.
 
 ## Hopf-module coalgebra infrastructure
 
-The current development also includes the foundational definitions
-`IsHopfModuleCoalgebra`, `hopfModuleActionCoalgHom`, `actionSubspace`, and
-`FiniteSubcoalgebra.act`. These prepare the generalization of the regular
-Hopf-algebra theorem to arbitrary Hopf-module coalgebras; that generalized
-rounding theorem is not yet claimed here.
+The current development also includes the public foundational definitions
+`HopfAmenability.IsHopfModuleCoalgebra`,
+`HopfAmenability.hopfModuleActionCoalgHom`,
+`HopfAmenability.actionSubspace`, and
+`HopfAmenability.FiniteSubcoalgebra.act`. The corresponding public results
+include `HopfAmenability.comul_smul`, `HopfAmenability.counit_smul`,
+`HopfAmenability.IsSubcoalgebra.actionSubspace`, and
+`HopfAmenability.actionSubspace_regular_eq_mul`. These prepare the
+generalization of the regular Hopf-algebra theorem to arbitrary Hopf-module
+coalgebras; that generalized rounding theorem is not yet claimed here.
 
 ## Building
 
