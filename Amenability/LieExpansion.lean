@@ -147,9 +147,15 @@ theorem finiteDimensional_lieExpansion
   let _ := finiteDimensional_lieActionSubspace F E
   exact Submodule.finiteDimensional_sup E (lieActionSubspace F E)
 
+noncomputable instance instFiniteDimensionalLieExpansion
+    (F : Submodule k L) (E : Submodule k M)
+    [FiniteDimensional k F] [FiniteDimensional k E] :
+    FiniteDimensional k (lieExpansion F E) :=
+  finiteDimensional_lieExpansion F E
+
 section Coalgebra
 
-variable [Coalgebra k M] [LieModuleCoalgebra k L M]
+variable [Coalgebra k M] [Coalgebra.IsLieModuleCoalgebra k L M]
 
 /-- The first Lie expansion of a subcoalgebra is a subcoalgebra. -/
 theorem IsSubcoalgebra.lieExpansion
@@ -200,7 +206,7 @@ theorem IsSubcoalgebra.lieExpansion
       | add z w hz hw => simp [hz, hw]
       | tmul a b => rfl
     refine ⟨TensorProduct.map ax inc z + TensorProduct.map inc ax z, ?_⟩
-    rw [map_add, comul_lie_apply, ← hz, hax, hinc]
+    rw [map_add, Coalgebra.comul_lie_apply, ← hz, hax, hinc]
   exact sup_le hCstable hactionStable
 
 /-- The finite subcoalgebra obtained by a finite-dimensional Lie expansion. -/

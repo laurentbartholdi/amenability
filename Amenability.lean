@@ -3,5 +3,8 @@ import Amenability.DensityLattice
 import Amenability.DensityExistence
 import Amenability.DensityFiltration
 import Amenability.CoalgebraRounding
+import Amenability.LieAmenability
 
 #check HopfAmenability.exists_finiteSubcoalgebra_ratio_le
+#check HopfAmenability.exists_finiteSubcoalgebra_lie_ratio_le
+#check HopfAmenability.IsAmenableLieModule.exists_finiteSubcoalgebra_folner

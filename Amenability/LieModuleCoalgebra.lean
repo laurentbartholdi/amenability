@@ -13,13 +13,13 @@ import Amenability.TwoSidedCoideal
 # Coalgebras carrying a compatible Lie-module structure
 -/
 
-namespace HopfAmenability
+namespace Coalgebra
 
 universe u v w
 
 /-- A coalgebra which is also a Lie module, with every Lie action operator a
 coderivation and with zero counit. -/
-class LieModuleCoalgebra
+class IsLieModuleCoalgebra
     (k : Type u) (L : Type v) (M : Type w)
     [Field k]
     [LieRing L] [LieAlgebra k L]
@@ -39,7 +39,7 @@ variable [Field k]
 variable [LieRing L] [LieAlgebra k L]
 variable [AddCommGroup M] [Module k M]
 variable [LieRingModule L M] [LieModule k L M]
-variable [Coalgebra k M] [LieModuleCoalgebra k L M]
+variable [Coalgebra k M] [IsLieModuleCoalgebra k L M]
 
 /-- Pointwise form of the coderivation compatibility. -/
 theorem comul_lie_apply (x : L) (m : M) :
@@ -49,14 +49,14 @@ theorem comul_lie_apply (x : L) (m : M) :
         (LieModule.toEnd k L M x).lTensor M
           (Coalgebra.comul (R := k) (A := M) m) := by
   have h := congrArg (fun f : M →ₗ[k] TensorProduct k M M => f m)
-    (LieModuleCoalgebra.comul_lie (k := k) (L := L) (M := M) x)
+    (IsLieModuleCoalgebra.comul_lie (k := k) (L := L) (M := M) x)
   simpa using h
 
 /-- Pointwise form of the counit compatibility. -/
 theorem counit_lie_apply (x : L) (m : M) :
     Coalgebra.counit (R := k) (A := M) ⁅x, m⁆ = 0 := by
   have h := congrArg (fun f : M →ₗ[k] k => f m)
-    (LieModuleCoalgebra.counit_lie (k := k) (L := L) (M := M) x)
+    (IsLieModuleCoalgebra.counit_lie (k := k) (L := L) (M := M) x)
   simpa using h
 
-end HopfAmenability
+end Coalgebra
