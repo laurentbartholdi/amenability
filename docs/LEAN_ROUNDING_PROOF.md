@@ -1,5 +1,18 @@
 # Coalgebraic rounding theorem — Lean handoff
 
+## Namespace convention
+
+Generic coalgebra, comodule, and subcoalgebra infrastructure belongs in
+`Coalgebra`; density filtrations, Hopf and Lie actions, rounding, and
+amenability belong in `HopfAmenability`.
+
+TODO for a separate namespace refactor: the generic declarations
+`IsSubcoalgebra`, `FiniteSubcoalgebra`, `range_mapIncl_self_eq_inf`,
+`tensorSquareIntersectionProperty`, and the subcoalgebra ambient-image
+infrastructure still live in `HopfAmenability`. They are intentionally not
+moved as part of the Lie-rounding cleanup because that change has a large
+dependency footprint.
+
 ## 1. Goal
 
 We are formalizing a coalgebraic version of the Følner/rounding argument.

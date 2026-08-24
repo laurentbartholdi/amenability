@@ -183,6 +183,43 @@ theorem exists_finiteSubcoalgebra_lie_ratio_le
     Coalgebra.exists_finiteSubcoalgebra_containing_submodule E
   exact exists_finiteSubcoalgebra_lie_ratio_le_of_le F E hE G hEG
 
+/-- The data selected by Lie-module coalgebra rounding. -/
+structure LieRoundingResult
+    (F : Submodule k L) (E : Submodule k M) where
+  C : FiniteSubcoalgebra k M
+  ne_bot : C.carrier ≠ ⊥
+  ratio_le :
+    (sfinrank k (lieExpansion F C.carrier) : ℚ) /
+        (finrank k C.carrier : ℚ) ≤
+      (sfinrank k (lieExpansion F E) : ℚ) /
+        (finrank k E : ℚ)
+
+/-- A chosen finite subcoalgebra supplied by the Lie rounding theorem. -/
+noncomputable def lieRounding
+    (F : Submodule k L) [FiniteDimensional k F]
+    (E : Submodule k M) [FiniteDimensional k E] (hE : E ≠ ⊥) :
+    LieRoundingResult F E :=
+  let h := exists_finiteSubcoalgebra_lie_ratio_le F E hE
+  let C := Classical.choose h
+  ⟨C, (Classical.choose_spec h).1, (Classical.choose_spec h).2⟩
+
+@[simp]
+theorem lieRounding_ne_bot
+    (F : Submodule k L) [FiniteDimensional k F]
+    (E : Submodule k M) [FiniteDimensional k E] (hE : E ≠ ⊥) :
+    (lieRounding F E hE).C.carrier ≠ ⊥ :=
+  (lieRounding F E hE).ne_bot
+
+theorem lieRounding_ratio_le
+    (F : Submodule k L) [FiniteDimensional k F]
+    (E : Submodule k M) [FiniteDimensional k E] (hE : E ≠ ⊥) :
+    (sfinrank k
+        (lieExpansion F (lieRounding F E hE).C.carrier) : ℚ) /
+          (finrank k (lieRounding F E hE).C.carrier : ℚ) ≤
+      (sfinrank k (lieExpansion F E) : ℚ) /
+        (finrank k E : ℚ) :=
+  (lieRounding F E hE).ratio_le
+
 end
 
 end HopfAmenability
