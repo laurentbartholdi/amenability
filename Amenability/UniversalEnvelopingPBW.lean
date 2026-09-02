@@ -10,9 +10,14 @@ import Mathlib.LinearAlgebra.TensorAlgebra.Basis
 import Mathlib.LinearAlgebra.Basis.VectorSpace
 import Mathlib.LinearAlgebra.Dual.Lemmas
 import Mathlib.LinearAlgebra.Finsupp.Supported
+import Mathlib.LinearAlgebra.Span.Defs
 import Mathlib.Data.List.Sort
 import Mathlib.Data.List.Chain
 import Mathlib.Data.Sum.Order
+import Mathlib.Data.Multiset.Sort
+import Mathlib.Data.Sym.Card
+import Mathlib.Data.Nat.Choose.Sum
+import Mathlib.Analysis.SpecialFunctions.Choose
 import Mathlib.RingTheory.AlgebraTower
 
 /-!
@@ -23,7 +28,7 @@ Lie algebra over a field.  It is independent of the amenability argument and
 is organized as reusable universal-enveloping-algebra infrastructure.
 -/
 
-open Module
+open Asymptotics Module
 
 namespace UniversalEnvelopingAlgebra
 
@@ -2995,6 +3000,326 @@ noncomputable def relativePBWBasis
   exact relativePBWBasisOfIotaInjective b f hf
     (iota_injective_of_basis b)
     (iota_injective_of_basis (extendMappedBasisLex b f hf))
+
+/-! ## Finite PBW filtrations -/
+
+/-- Multiplication respects the word-length filtration. -/
+theorem mul_mem_monomialFiltration {ι : Type w} [LinearOrder ι]
+    (b : Basis ι k L) {m n : ℕ}
+    {x y : UniversalEnvelopingAlgebra k L}
+    (hx : x ∈ monomialFiltration b m)
+    (hy : y ∈ monomialFiltration b n) :
+    x * y ∈ monomialFiltration b (m + n) := by
+  refine Submodule.span_induction₂
+    (p := fun x y _ _ => x * y ∈ monomialFiltration b (m + n))
+    ?_ ?_ ?_ ?_ ?_ ?_ ?_ hx hy
+  · rintro _ _ ⟨u, hu, rfl⟩ ⟨v, hv, rfl⟩
+    rw [← pbwMonomial_append]
+    apply pbwMonomial_mem_filtration
+    simp only [List.length_append]
+    omega
+  · intro y _hy
+    simp
+  · intro x _hx
+    simp
+  · intro x y z _hx _hy _hz hxz hyz
+    simpa [add_mul] using (monomialFiltration b (m + n)).add_mem hxz hyz
+  · intro x y z _hx _hy _hz hxy hxz
+    simpa [mul_add] using (monomialFiltration b (m + n)).add_mem hxy hxz
+  · intro r x y _hx _hy hxy
+    simpa [smul_mul_assoc] using
+      (monomialFiltration b (m + n)).smul_mem r hxy
+  · intro r x y _hx _hy hxy
+    simpa [mul_smul_comm] using
+      (monomialFiltration b (m + n)).smul_mem r hxy
+
+/-- The span of ordered PBW monomials of length at most `n`. -/
+def orderedMonomialFiltration {ι : Type w} [LinearOrder ι]
+    (b : Basis ι k L) (n : ℕ) :
+    Submodule k (UniversalEnvelopingAlgebra k L) :=
+  Submodule.span k {x | ∃ word : PBWWord ι,
+    word.1.length ≤ n ∧ orderedMonomial b word = x}
+
+theorem orderedMonomial_mem_orderedMonomialFiltration
+    {ι : Type w} [LinearOrder ι] (b : Basis ι k L)
+    (word : PBWWord ι) {n : ℕ} (hword : word.1.length ≤ n) :
+    orderedMonomial b word ∈ orderedMonomialFiltration b n :=
+  Submodule.subset_span ⟨word, hword, rfl⟩
+
+theorem orderedMonomialFiltration_mono
+    {ι : Type w} [LinearOrder ι] (b : Basis ι k L)
+    {m n : ℕ} (hmn : m ≤ n) :
+    orderedMonomialFiltration b m ≤ orderedMonomialFiltration b n := by
+  apply Submodule.span_mono
+  rintro _ ⟨word, hword, rfl⟩
+  exact ⟨word, hword.trans hmn, rfl⟩
+
+/-- Straightening a PBW word does not increase its length. -/
+theorem pbwMonomial_mem_orderedMonomialFiltration
+    {ι : Type w} [LinearOrder ι] (b : Basis ι k L)
+    (word : List ι) :
+    pbwMonomial b word ∈ orderedMonomialFiltration b word.length := by
+  induction h : word.length using Nat.strong_induction_on generalizing word with
+  | h n ih =>
+      by_cases hnil : word = []
+      · subst word
+        exact orderedMonomial_mem_orderedMonomialFiltration b
+          ⟨[], by simp⟩ (by simp)
+      let sorted := word.mergeSort (fun i j => i ≤ j)
+      have hperm : word.Perm sorted := (List.mergeSort_perm word _).symm
+      have hsorted : sorted.Pairwise (· ≤ ·) :=
+        List.pairwise_mergeSort' (· ≤ ·) word
+      have hlower : monomialFiltration b (word.length - 1) ≤
+          orderedMonomialFiltration b n := by
+        apply Submodule.span_le.2
+        rintro _ ⟨v, hv, rfl⟩
+        have hvlt : v.length < word.length := by
+          have hpos : 0 < word.length := List.length_pos_of_ne_nil hnil
+          omega
+        have hvlt' : v.length < n := by simpa [h] using hvlt
+        have hvn : v.length ≤ n := hvlt'.le
+        exact (orderedMonomialFiltration_mono b hvn)
+          (ih v.length hvlt' v rfl)
+      have hdiff := hlower (pbwMonomial_perm_sub_mem_filtration b hperm)
+      have hsort : pbwMonomial b sorted ∈
+          orderedMonomialFiltration b n := by
+        apply orderedMonomial_mem_orderedMonomialFiltration b
+          ⟨sorted, hsorted⟩
+        simpa [← h] using hperm.length_eq.symm.le
+      have hadd := (orderedMonomialFiltration b n).add_mem hdiff hsort
+      rw [show pbwMonomial b word =
+        (pbwMonomial b word - pbwMonomial b sorted) +
+          pbwMonomial b sorted by abel]
+      exact hadd
+
+/-- The arbitrary-word and ordered-word descriptions of the finite PBW
+filtration agree. -/
+theorem monomialFiltration_eq_orderedMonomialFiltration
+    {ι : Type w} [LinearOrder ι] (b : Basis ι k L) (n : ℕ) :
+    monomialFiltration b n = orderedMonomialFiltration b n := by
+  apply le_antisymm
+  · apply Submodule.span_le.2
+    rintro _ ⟨word, hword, rfl⟩
+    exact (orderedMonomialFiltration_mono b hword)
+      (pbwMonomial_mem_orderedMonomialFiltration b word)
+  · apply Submodule.span_le.2
+    rintro _ ⟨word, hword, rfl⟩
+    exact pbwMonomial_mem_filtration b word.1 hword
+
+/-- Ordered PBW words are the sorted-list presentation of finite
+multisets. -/
+def pbwWordEquivMultiset {ι : Type w} [LinearOrder ι] :
+    PBWWord ι ≃ Multiset ι where
+  toFun word := word.1
+  invFun s := ⟨s.sort (· ≤ ·), Multiset.pairwise_sort s (· ≤ ·)⟩
+  left_inv word := by
+    apply Subtype.ext
+    change Multiset.sort (↑word.1) (· ≤ ·) = word.1
+    rw [Multiset.coe_sort, List.mergeSort_eq_self (· ≤ ·) word.2]
+  right_inv s := Multiset.sort_eq s (· ≤ ·)
+
+/-- Ordered PBW words of length at most `n`. -/
+abbrev BoundedPBWWord {ι : Type w} [LinearOrder ι] (n : ℕ) :=
+  {word : PBWWord ι // word.1.length ≤ n}
+
+/-- The two standard presentations of a natural number bounded by `n`. -/
+def finSuccEquivLE (n : ℕ) : Fin (n + 1) ≃ {m : ℕ // m ≤ n} where
+  toFun m := ⟨m, Nat.lt_succ_iff.mp m.isLt⟩
+  invFun m := ⟨m, Nat.lt_succ_iff.mpr m.2⟩
+  left_inv _ := Fin.ext rfl
+  right_inv _ := Subtype.ext rfl
+
+/-- Bounded ordered words are multisets together with their bounded
+cardinality. -/
+def boundedPBWWordEquivSigmaSym {ι : Type w} [LinearOrder ι] (n : ℕ) :
+    BoundedPBWWord (ι := ι) n ≃ Σ m : Fin (n + 1), Sym ι m := by
+  let eWords : BoundedPBWWord (ι := ι) n ≃
+      {s : Multiset ι // Multiset.card s ≤ n} :=
+    Equiv.subtypeEquiv (pbwWordEquivMultiset (ι := ι)) (fun word => by
+      change word.1.length ≤ n ↔ Multiset.card (↑word.1 : Multiset ι) ≤ n
+      rw [Multiset.coe_card])
+  let eSigma : {z : Σ m : ℕ, Sym ι m // z.1 ≤ n} ≃
+      {s : Multiset ι // Multiset.card s ≤ n} :=
+    Equiv.subtypeEquiv (Equiv.sigmaFiberEquiv Multiset.card) (fun z => by
+      change z.1 ≤ n ↔ Multiset.card z.2.1 ≤ n
+      rw [z.2.2])
+  let eBound : (Σ m : Fin (n + 1), Sym ι m) ≃
+      {z : Σ m : ℕ, Sym ι m // z.1 ≤ n} :=
+    (Equiv.sigmaCongrLeft (finSuccEquivLE n)).trans
+      (Equiv.subtypeSigmaEquiv (fun m : ℕ => Sym ι m) (· ≤ n)).symm
+  exact (eWords.trans eSigma.symm).trans eBound.symm
+
+noncomputable instance fintypeBoundedPBWWord
+    {ι : Type w} [LinearOrder ι] [Fintype ι] (n : ℕ) :
+    Fintype (BoundedPBWWord (ι := ι) n) :=
+  Fintype.ofEquiv (Σ m : Fin (n + 1), Sym ι m)
+    (boundedPBWWordEquivSigmaSym (ι := ι) n).symm
+
+/-- Stars and bars counts the ordered PBW words of bounded length. -/
+theorem card_boundedPBWWord {ι : Type w} [LinearOrder ι] [Fintype ι]
+    (n : ℕ) :
+    Fintype.card (BoundedPBWWord (ι := ι) n) =
+      (n + Fintype.card ι).choose (Fintype.card ι) := by
+  rw [Fintype.card_congr (boundedPBWWordEquivSigmaSym (ι := ι) n),
+    Fintype.card_sigma]
+  simp_rw [Sym.card_sym_eq_multichoose]
+  rw [Fin.sum_univ_eq_sum_range]
+  exact Nat.sum_range_multichoose n (Fintype.card ι)
+
+/-- The family of ordered monomials of length at most `n`. -/
+def boundedOrderedMonomial {ι : Type w} [LinearOrder ι]
+    (b : Basis ι k L) (n : ℕ) :
+    BoundedPBWWord (ι := ι) n → UniversalEnvelopingAlgebra k L :=
+  fun word => orderedMonomial b word.1
+
+theorem orderedMonomialFiltration_eq_span_range_bounded
+    {ι : Type w} [LinearOrder ι] (b : Basis ι k L) (n : ℕ) :
+    orderedMonomialFiltration b n =
+      Submodule.span k (Set.range (boundedOrderedMonomial b n)) := by
+  apply le_antisymm
+  · apply Submodule.span_le.2
+    rintro _ ⟨word, hword, rfl⟩
+    exact Submodule.subset_span ⟨⟨word, hword⟩, rfl⟩
+  · apply Submodule.span_le.2
+    rintro _ ⟨word, rfl⟩
+    exact orderedMonomial_mem_orderedMonomialFiltration b word.1 word.2
+
+/-- The finite PBW filtration is finite-dimensional when the Lie algebra
+has a finite basis. -/
+theorem finiteDimensional_monomialFiltration
+    {ι : Type w} [LinearOrder ι] [Finite ι]
+    (b : Basis ι k L) (n : ℕ) :
+    FiniteDimensional k (monomialFiltration b n) := by
+  let : Fintype ι := Fintype.ofFinite ι
+  rw [monomialFiltration_eq_orderedMonomialFiltration,
+    orderedMonomialFiltration_eq_span_range_bounded]
+  exact Module.Finite.span_of_finite k (Set.toFinite _)
+
+/-- The dimension of the degree-`n` PBW filtration. -/
+theorem finrank_monomialFiltration [CharZero k]
+    {ι : Type w} [LinearOrder ι] [Fintype ι]
+    (b : Basis ι k L) (n : ℕ) :
+    Module.finrank k (monomialFiltration b n) =
+      (n + Fintype.card ι).choose (Fintype.card ι) := by
+  rw [monomialFiltration_eq_orderedMonomialFiltration,
+    orderedMonomialFiltration_eq_span_range_bounded]
+  have hlin : LinearIndependent k (boundedOrderedMonomial b n) := by
+    change LinearIndependent k
+      (fun word : {word : PBWWord ι // word.1.length ≤ n} =>
+        orderedMonomial b word.1)
+    exact (orderedMonomial_linearIndependent b).comp Subtype.val
+      Subtype.val_injective
+  rw [finrank_span_eq_card hlin, card_boundedPBWWord]
+
+/-- The PBW filtration as an increasing sequence. -/
+def monomialFiltrationOrderHom {ι : Type w} [LinearOrder ι]
+    (b : Basis ι k L) : ℕ →o Submodule k (UniversalEnvelopingAlgebra k L) where
+  toFun n := monomialFiltration b n
+  monotone' _ _ hmn := monomialFiltration_mono b hmn
+
+/-- The union of the finite PBW filtration is the whole enveloping
+algebra. -/
+theorem iSup_monomialFiltration_eq_top
+    {ι : Type w} [LinearOrder ι] (b : Basis ι k L) :
+    ⨆ n : ℕ, monomialFiltration b n = ⊤ := by
+  rw [← monomialSpan_eq_top b]
+  apply le_antisymm
+  · exact iSup_le fun n => Submodule.span_mono (by
+      rintro _ ⟨word, _hword, rfl⟩
+      exact ⟨word, rfl⟩)
+  · apply Submodule.span_le.2
+    rintro _ ⟨word, rfl⟩
+    exact le_iSup (fun n : ℕ => monomialFiltration b n) word.length
+      (pbwMonomial_mem_filtration b word le_rfl)
+
+/-- A finite-dimensional subspace of the enveloping algebra is contained
+in one finite PBW filtration step. -/
+theorem exists_le_monomialFiltration_of_finite
+    {ι : Type w} [LinearOrder ι] (b : Basis ι k L)
+    (P : Submodule k (UniversalEnvelopingAlgebra k L))
+    [Module.Finite k P] :
+    ∃ d : ℕ, P ≤ monomialFiltration b d := by
+  let N : ℕ →o Submodule k (UniversalEnvelopingAlgebra k L) :=
+    { toFun := fun n => P ⊓ monomialFiltration b n
+      monotone' := fun _ _ hmn => inf_le_inf le_rfl
+        (monomialFiltration_mono b hmn) }
+  have hsup : iSup N = P := by
+    apply le_antisymm
+    · exact iSup_le fun n => inf_le_left
+    · intro x hx
+      have hxtop : x ∈ ⨆ n : ℕ, monomialFiltration b n := by
+        rw [iSup_monomialFiltration_eq_top]
+        trivial
+      obtain ⟨n, hn⟩ :=
+        (Submodule.mem_iSup_of_chain (monomialFiltrationOrderHom b) x).mp hxtop
+      exact le_iSup N n ⟨hx, hn⟩
+  have hfg : P.FG :=
+    (Submodule.fg_top P).mp Module.Finite.fg_top
+  obtain ⟨d, hd⟩ := hfg.stabilizes_of_iSup_eq N hsup
+  exact ⟨d, hd.trans_le inf_le_right⟩
+
+/-- A fixed shift of a binomial-coefficient sequence has asymptotic ratio
+one.  This is the numerical Følner estimate for finite PBW filtrations. -/
+theorem exists_choose_shift_le (r d : ℕ) (ε : ℚ) (hε : 0 < ε) :
+    ∃ n : ℕ,
+      ((n + d + r).choose r : ℚ) ≤
+        (1 + ε) * ((n + r).choose r : ℚ) := by
+  by_cases hr : r = 0
+  · subst r
+    exact ⟨0, by simp [hε.le]⟩
+  have hequiv :=
+    ((isEquivalent_choose r).comp_tendsto
+      (Filter.tendsto_add_atTop_nat (d + r))).div
+    ((isEquivalent_choose r).comp_tendsto
+      (Filter.tendsto_add_atTop_nat r))
+  have hbase : Filter.Tendsto
+      (fun n : ℕ => (((n + d + r : ℕ) : ℝ) /
+        ((n + r : ℕ) : ℝ)) ^ r)
+      Filter.atTop (nhds 1) := by
+    have hsmall := (tendsto_natCast_div_add_atTop (d : ℝ)).comp
+      (Filter.tendsto_add_atTop_nat r)
+    have hinv := hsmall.inv₀ one_ne_zero
+    convert hinv.pow r using 1
+    · funext n
+      change (((n + d + r : ℕ) : ℝ) / ((n + r : ℕ) : ℝ)) ^ r =
+        ((((n + r : ℕ) : ℝ) /
+          (((n + r : ℕ) : ℝ) + (d : ℝ)))⁻¹) ^ r
+      congr 1
+      rw [inv_div]
+      norm_num [Nat.cast_add]
+      ring
+    · norm_num
+  have hquot' : Filter.Tendsto
+      (((fun n : ℕ => (n : ℝ) ^ r / r.factorial) ∘
+          fun n : ℕ => n + (d + r)) /
+        ((fun n : ℕ => (n : ℝ) ^ r / r.factorial) ∘
+          fun n : ℕ => n + r))
+      Filter.atTop (nhds 1) := by
+    convert hbase using 1
+    funext n
+    have hfac : (r.factorial : ℝ) ≠ 0 := by positivity
+    change ((((n + (d + r) : ℕ) : ℝ) ^ r / r.factorial) /
+      (((n + r : ℕ) : ℝ) ^ r / r.factorial)) =
+        (((n + d + r : ℕ) : ℝ) / ((n + r : ℕ) : ℝ)) ^ r
+    rw [div_div_div_cancel_right₀ hfac]
+    rw [Nat.add_assoc]
+    exact (div_pow _ _ r).symm
+  have hquot := hequiv.tendsto_nhds_iff.mpr hquot'
+  have hevent : ∀ᶠ n : ℕ in Filter.atTop,
+      (((n + (d + r)).choose r : ℕ) : ℝ) /
+          (((n + r).choose r : ℕ) : ℝ) < 1 + (ε : ℝ) :=
+    (tendsto_order.mp hquot).2 (1 + (ε : ℝ)) (by
+      norm_num
+      exact_mod_cast hε)
+  obtain ⟨n, hn⟩ := Filter.eventually_atTop.mp hevent
+  have hden : 0 < ((((n + r).choose r : ℕ) : ℝ)) := by
+    exact_mod_cast Nat.choose_pos (Nat.le_add_left r n)
+  have hreal : ((((n + (d + r)).choose r : ℕ) : ℝ)) ≤
+      (1 + (ε : ℝ)) * (((n + r).choose r : ℕ) : ℝ) :=
+    ((div_lt_iff₀ hden).mp (hn n le_rfl)).le
+  refine ⟨n, ?_⟩
+  rw [← Nat.add_assoc] at hreal
+  exact_mod_cast hreal
 
 
 end

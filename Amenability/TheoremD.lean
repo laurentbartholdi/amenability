@@ -1795,6 +1795,142 @@ theorem IsAlgebraicallyAmenableModule.coefficient_of_basis
 
 end FreeModuleDescent
 
+section ProjectiveModuleDescent
+
+variable {A : Type*} {Q : Type*}
+variable [Ring A] [Algebra k A]
+variable [AddCommGroup Q] [Module k Q] [Module A Q]
+variable [IsScalarTower k A Q]
+
+/-- Algebraic amenability descends from an amenable projective module to its
+coefficient algebra. This is the projective-module Følner argument, separate
+from the Takeuchi--Wigner projectivity input. -/
+theorem algebraicallyAmenable_of_projective
+    [Module.Projective A Q]
+    (hQ : IsAlgebraicallyAmenableModule (k := k) (A := A) (Q := Q)) :
+    IsAlgebraicallyAmenableModule (k := k) (A := A) (Q := A) := by
+  obtain ⟨s, hs⟩ := Module.projective_def.mp (inferInstance : Module.Projective A Q)
+  have hsInjective : Function.Injective s := hs.injective
+  let sk : Q →ₗ[k] Q →₀ A := s.restrictScalars k
+  have hfree : IsAlgebraicallyAmenableModule
+      (k := k) (A := A) (Q := Q →₀ A) := by
+    intro F hF ε hε
+    obtain ⟨E, hE, hEfd, hratio⟩ := hQ F hF ε hε
+    let E' : Submodule k (Q →₀ A) := E.map sk
+    have hE' : E' ≠ ⊥ := by
+      intro hbot
+      apply hE
+      apply le_antisymm
+      · intro x hx
+        have hx' : sk x ∈ E' := Submodule.mem_map_of_mem hx
+        rw [hbot, Submodule.mem_bot] at hx'
+        exact hsInjective (by simpa [sk] using hx')
+      · exact bot_le
+    have hmap : (algebraModuleExpansion F E).map sk =
+        algebraModuleExpansion F E' := by
+      rw [algebraModuleExpansion, algebraModuleExpansion, Submodule.map_sup]
+      congr 1
+      apply le_antisymm
+      · apply Submodule.map_le_iff_le_comap.mpr
+        apply Submodule.map₂_le.2
+        intro a ha e he
+        change sk (a • e) ∈
+          Submodule.map₂ (Algebra.lsmul k k (Q →₀ A)).toLinearMap F E'
+        rw [show sk (a • e) = a • sk e by simp [sk]]
+        exact Submodule.mem_map₂ _ _ _ ha (Submodule.mem_map_of_mem he)
+      · apply Submodule.map₂_le.2
+        intro a ha y hy
+        rcases hy with ⟨e, he, rfl⟩
+        refine ⟨a • e, Submodule.mem_map₂ _ _ _ ha he, ?_⟩
+        simp [sk]
+    let _ : FiniteDimensional k E' := by
+      dsimp [E']
+      infer_instance
+    have hdimE : finrank k E' = finrank k E := by
+      have h := (LinearEquiv.ofInjective (sk.domRestrict E)
+        (fun x y hxy => Subtype.ext (hsInjective hxy))).finrank_eq.symm
+      rw [LinearMap.range_domRestrict] at h
+      exact h
+    have hdimExpansion :
+        finrank k ((algebraModuleExpansion F E).map sk) =
+          finrank k (algebraModuleExpansion F E) := by
+      have h := (LinearEquiv.ofInjective
+        (sk.domRestrict (algebraModuleExpansion F E))
+        (fun x y hxy => Subtype.ext (hsInjective hxy))).finrank_eq.symm
+      rw [LinearMap.range_domRestrict] at h
+      exact h
+    refine ⟨E', hE', inferInstance, ?_⟩
+    rw [← hmap, sfinrank, sfinrank, hdimE, hdimExpansion]
+    exact hratio
+  exact hfree.coefficient_of_basis (Finsupp.basisSingleOne (R := A))
+
+end ProjectiveModuleDescent
+
+section HopfSubalgebraDescent
+
+universe x y
+
+variable {H : Type x} {K : Type y}
+variable [Ring H] [HopfAlgebra k H] [Coalgebra.IsCocomm k H]
+variable [Ring K] [HopfAlgebra k K] [Coalgebra.IsCocomm k K]
+
+/-- Algebraic amenability descends along a cocommutative Hopf-subalgebra
+embedding. The only external input is projectivity; the Følner descent is
+`algebraicallyAmenable_of_projective` above. -/
+theorem algebraicAmenability_of_hopfSubalgebra
+    (i : HopfSubalgebraEmbedding (k := k) (H := H) K)
+    (hH : IsAlgebraicallyAmenableHopfAlgebra (k := k) (H := H)) :
+    IsAlgebraicallyAmenableHopfAlgebra (k := k) (H := K) := by
+  let _ : Module K H := hopfSubalgebraRestrictionModule i
+  let _ : IsScalarTower k K H :=
+    IsScalarTower.of_algebraMap_smul fun r h => by
+      change i.toAlgHom (algebraMap k K r) * h = r • h
+      rw [i.toAlgHom.commutes, Algebra.smul_def]
+  have hrestricted : IsAlgebraicallyAmenableModule
+      (k := k) (A := K) (Q := H) := by
+    intro F hF ε hε
+    let F' : Submodule k H := F.map i.toAlgHom.toLinearMap
+    let _ : FiniteDimensional k F' := by
+      dsimp [F']
+      infer_instance
+    obtain ⟨E, hE, hEfd, hratio⟩ := hH F' inferInstance ε hε
+    refine ⟨E, hE, hEfd, ?_⟩
+    have hexpansion :
+        algebraModuleExpansion (k := k) F E = actionExpansion F' E := by
+      rw [algebraModuleExpansion, actionExpansion, actionSubspace_eq_map₂]
+      congr 1
+      apply le_antisymm
+      · apply Submodule.map₂_le.2
+        intro a ha e he
+        exact Submodule.mem_map₂
+          (Algebra.lsmul k k H).toLinearMap F' E
+          (show i.toAlgHom a ∈ F' from ⟨a, ha, rfl⟩) he
+      · apply Submodule.map₂_le.2
+        intro a ha e he
+        rcases ha with ⟨a, ha, rfl⟩
+        exact Submodule.mem_map₂ _ _ _ ha he
+    rwa [hexpansion]
+  let _ : Module.Projective K H :=
+    takeuchiWigner_projective_left (inferInstance : Coalgebra.IsCocomm k H) i
+  have hK := algebraicallyAmenable_of_projective hrestricted
+  intro F hF ε hε
+  obtain ⟨E, hE, hEfd, hratio⟩ := hK F hF ε hε
+  exact ⟨E, hE, hEfd, by
+    simpa only [algebraModuleExpansion, actionExpansion,
+      actionSubspace_eq_map₂] using hratio⟩
+
+/-- **Theorem D.** Every Hopf subalgebra of an amenable cocommutative Hopf
+algebra is amenable. -/
+theorem isAmenableHopfAlgebra_of_hopfSubalgebra
+    (i : HopfSubalgebraEmbedding (k := k) (H := H) K)
+    (hH : IsAmenableHopfAlgebra (k := k) (H := H)) :
+    IsAmenableHopfAlgebra (k := k) (H := K) := by
+  apply isAmenableHopfAlgebra_iff_algebraicallyAmenable.mpr
+  exact algebraicAmenability_of_hopfSubalgebra i
+    (isAmenableHopfAlgebra_iff_algebraicallyAmenable.mp hH)
+
+end HopfSubalgebraDescent
+
 section AssociativeLieInstance
 
 attribute [local instance 100] LieRing.ofAssociativeRing
@@ -2395,7 +2531,7 @@ theorem IsAmenableLieAlgebra.extension_components
       (LieIdeal.quotientMkLieHom_surjective I)
 
 /-- Extension closure in Theorem D. -/
-theorem isAmenableLieAlgebra_extension [CharZero k]
+theorem isAmenableLieAlgebra_extension_direct [CharZero k]
     (I : LieIdeal k L)
     (hI : IsAmenableLieAlgebra (k := k) (L := I))
     (hQ : IsAmenableLieAlgebra (k := k) (L := L ⧸ I)) :
@@ -2584,51 +2720,15 @@ theorem isAmenableLieAlgebra_extension [CharZero k]
     _ = (1 + ε) * sfinrank k E := by rw [hdimE]; norm_num
 
 /-- The extension clause of Theorem D in iff form. -/
-theorem isAmenableLieAlgebra_extension_iff [CharZero k]
+theorem isAmenableLieAlgebra_extension_direct_iff [CharZero k]
     (I : LieIdeal k L) :
     IsAmenableLieAlgebra (k := k) (L := L) ↔
       IsAmenableLieAlgebra (k := k) (L := I) ∧
         IsAmenableLieAlgebra (k := k) (L := L ⧸ I) := by
-  classical
-  let α := Module.Basis.ofVectorSpaceIndex k I
-  let β := Module.Basis.ofVectorSpaceIndex k (L ⧸ I)
-  let bI : Basis α k I := Module.Basis.ofVectorSpace k I
-  let bQ : Basis β k (L ⧸ I) := Module.Basis.ofVectorSpace k (L ⧸ I)
-  let _ : LinearOrder α := WellOrderingRel.isWellOrder.linearOrder
-  let _ : LinearOrder β := WellOrderingRel.isWellOrder.linearOrder
-  let inc := LieIdeal.inclusionLieHom I
-  let quo := LieIdeal.quotientMkLieHom I
-  let e : CleftExactSequence (k := k)
-      (UniversalEnvelopingAlgebra k I)
-      (UniversalEnvelopingAlgebra k L)
-      (UniversalEnvelopingAlgebra k (L ⧸ I)) :=
-    { inclusion :=
-        { toAlgHom := ueaMap inc
-          map_counit := (ueaMapCoalgHom inc).counit_comp
-          map_comul := (ueaMapCoalgHom inc).map_comp_comul }
-      projection :=
-        { toAlgHom := ueaMap quo
-          map_counit := (ueaMapCoalgHom quo).counit_comp
-          map_comul := (ueaMapCoalgHom quo).map_comp_comul }
-      inclusion_injective := ueaMap_injective inc (fun x y h => Subtype.ext h)
-      projection_surjective := ueaMap_surjective quo
-        (LieIdeal.quotientMkLieHom_surjective I)
-      projection_inclusion := fun a => DFunLike.congr_fun
-        (LieIdeal.pbwMap_quotient_comp_ideal I) a
-      coalgebraSection := LieIdeal.ueaLinearSectionCoalgHom I bQ bI
-      projection_section := LieIdeal.pbwMap_comp_ueaLinearSection I bQ bI
-      section_one := by
-        let word : UniversalEnvelopingAlgebra.PBWWord β := ⟨[], by simp⟩
-        change LieIdeal.ueaLinearSection I bQ bI
-          (UniversalEnvelopingAlgebra.orderedMonomial bQ word) = 1
-        rw [LieIdeal.ueaLinearSection_orderedMonomial]
-        simp [LieIdeal.liftedQuotientMonomial, word]
-      rightNormalBasis := LieIdeal.extensionPBWCoalgEquiv I bQ bI
-      rightNormalBasis_tmul := LieIdeal.extensionPBWMap_tmul I bQ bI }
-  rw [isAmenableLieAlgebra_iff_isAmenableHopfAlgebra,
-    isAmenableLieAlgebra_iff_isAmenableHopfAlgebra,
-    isAmenableLieAlgebra_iff_isAmenableHopfAlgebra]
-  exact isAmenableHopfAlgebra_cleftExtension_iff e
+  constructor
+  · exact IsAmenableLieAlgebra.extension_components I
+  · rintro ⟨hI, hQ⟩
+    exact isAmenableLieAlgebra_extension_direct I hI hQ
 
 end AssociativeLieInstance
 
@@ -2679,6 +2779,7 @@ theorem algebraBall_ne_bot (P : Submodule k U) (n : ℕ) :
   simp only [Submodule.mem_bot] at hOne
   exact hone hOne
 
+set_option linter.unusedVariables false in
 /-- Local subexponential growth in exponential-bound form: for every
 finite-dimensional coefficient space and every exponential rate greater
 than one, the corresponding algebra balls are bounded by that rate to the
@@ -2686,7 +2787,7 @@ radius. -/
 def HasLocallySubexponentialGrowth : Prop :=
   ∀ (P : Submodule k U), FiniteDimensional k P →
     ∀ ε : ℚ, 0 < ε →
-      ∃ _C : ℚ, ∀ n : ℕ,
+      ∃ C : ℚ, ∀ n : ℕ,
         (sfinrank k (algebraBall P n) : ℚ) ≤ (1 + ε) ^ n
 
 /-- The elementary ratio test used to pass from a subexponential bound to

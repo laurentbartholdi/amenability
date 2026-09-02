@@ -1,0 +1,54 @@
+/-
+Copyright (c) 2026 Laurent Bartholdi. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
+-/
+
+import Amenability.TheoremA
+import Amenability.TheoremB
+import Amenability.TheoremC
+import Amenability.TheoremD
+import Amenability.TheoremE
+import Amenability.TheoremF
+import Amenability.TheoremG
+import Amenability.TheoremH
+import Amenability.TheoremI
+import Amenability.TheoremJ
+import Amenability.GroupPermanence
+import Amenability.GroupCleftExactSequence
+
+/-!
+# Axiom audit for the manuscript's main theorems
+
+This file is extended as Theorems A--J acquire their final public endpoints.
+The output of each command must contain no project-local assumptions except
+the two explicitly authorized in the project handoff.
+-/
+
+#print axioms HopfAmenability.isAmenableHopfModuleCoalgebra_iff_hasActionFolnerSubspaces
+#print axioms HopfAmenability.exists_finiteSubcoalgebra_expansion_ratio_le
+#print axioms HopfAmenability.IsAmenableHopfModuleCoalgebra.of_surjective_coalgHom
+#print axioms HopfAmenability.isAmenableHopfAlgebra_iff_all_nonzero_moduleCoalgebras
+#print axioms HopfAmenability.algebraicallyAmenable_of_projective
+#print axioms HopfAmenability.isAmenableHopfAlgebra_of_hopfSubalgebra
+#print axioms HopfAmenability.isAmenableHopfAlgebra_cleftExtension_of_components
+#print axioms HopfAmenability.isAmenableHopfAlgebra_cleftExtension_iff
+#print axioms HopfAmenability.hasActionFolnerSubspaces_of_quotient_permutationModule
+#print axioms HopfAmenability.hasActionFolnerSubspaces_of_isAmenableGroup
+#print axioms HopfAmenability.isAmenableLieAlgebra_of_locallySubexponentialGrowth
+#print axioms HopfAmenability.isAmenableLieAlgebra_of_injective
+#print axioms HopfAmenability.isAmenableLieAlgebra_quotient
+#print axioms HopfAmenability.isAmenableLieAlgebra_extension_of_components
+#print axioms HopfAmenability.isAmenableLieAlgebra_extension_iff
+#print axioms HopfAmenability.isAmenableLieAlgebra_directedUnion
+#print axioms HopfAmenability.elementaryLieAlgebras_ne_subexponentiallyAmenableLieAlgebras
+#print axioms HopfAmenability.elementaryLieAlgebras_ne_subexponentiallyAmenableLieAlgebras_general
+#print axioms HopfAmenability.exists_amenable_exponentialGrowth_locallyFiniteByOne
+#print axioms HopfAmenability.isAmenable_associatedGraded
+#print axioms HopfAmenability.iInf_tensorFiltration_eq
+#print axioms HopfAmenability.AugmentationAssociatedGradedData.infinity_isCoideal
+#print axioms HopfAmenability.isAmenableGroup_iff_groupAlgebra
+#print axioms HopfAmenability.isAmenableGroup_subgroup
+#print axioms HopfAmenability.isAmenableGroup_normalExtension_iff
+#print axioms HopfAmenability.groupAlgebra_projection_ker
+#print axioms HopfAmenability.groupAlgebraQuotientEquiv

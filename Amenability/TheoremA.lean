@@ -52,6 +52,45 @@ theorem finiteDimensional_actionExpansion
   rw [actionExpansion]
   infer_instance
 
+/-- The one-dimensional subcoalgebra spanned by the unit of a Hopf algebra. -/
+def unitFiniteSubcoalgebra : FiniteSubcoalgebra k H where
+  carrier := Submodule.span k {1}
+  isSubcoalgebra := by
+    intro x hx
+    rw [Submodule.mem_span_singleton] at hx
+    obtain ⟨a, rfl⟩ := hx
+    let oneInSpan : Submodule.span k ({1} : Set H) :=
+      ⟨1, Submodule.mem_span_singleton_self 1⟩
+    refine ⟨(a • oneInSpan) ⊗ₜ[k] oneInSpan, ?_⟩
+    simp only [TensorProduct.map_tmul, map_smul, Submodule.subtype_apply,
+      Bialgebra.comul_one]
+    exact (TensorProduct.smul_tmul' a (1 : H) (1 : H)).symm
+  finiteDimensional := by infer_instance
+
+/-- Adjoining the unit to the acting space turns pure action into the
+manuscript's expansion `E + F E`. -/
+theorem actionSubspace_sup_unit_eq_actionExpansion
+    (F : Submodule k H) (E : Submodule k M) :
+    actionSubspace (F ⊔ (unitFiniteSubcoalgebra (k := k) (H := H)).carrier) E =
+      actionExpansion F E := by
+  have hunit :
+      actionSubspace (unitFiniteSubcoalgebra (k := k) (H := H)).carrier E = E := by
+    apply le_antisymm
+    · rw [actionSubspace_eq_map₂, Submodule.map₂_le]
+      intro h hh m hm
+      change h • m ∈ E
+      change h ∈ Submodule.span k ({1} : Set H) at hh
+      rw [Submodule.mem_span_singleton] at hh
+      obtain ⟨a, rfl⟩ := hh
+      simpa [Algebra.smul_def] using E.smul_mem a hm
+    · intro m hm
+      simpa using product_mem_actionSubspace
+        (F := (unitFiniteSubcoalgebra (k := k) (H := H)).carrier)
+        (Submodule.mem_span_singleton_self 1) hm
+  rw [actionSubspace_eq_map₂, Submodule.map₂_sup_left,
+    ← actionSubspace_eq_map₂, ← actionSubspace_eq_map₂, hunit,
+    actionExpansion, sup_comm]
+
 /-- Elek's ordinary finite-dimensional Følner-subspace condition for an
 `H`-module. -/
 def HasActionFolnerSubspaces : Prop :=
@@ -66,6 +105,29 @@ section Coalgebra
 
 variable [Coalgebra.IsCocomm k H]
 variable [Coalgebra k M] [IsHopfModuleCoalgebra k H M]
+
+/-- **The sharp ratio form of Theorem A.** For the manuscript expansion
+`E + F E`, rounding to a finite subcoalgebra does not increase the ratio. -/
+theorem exists_finiteSubcoalgebra_expansion_ratio_le
+    (F : FiniteSubcoalgebra k H)
+    (E : Submodule k M)
+    [FiniteDimensional k E]
+    (hE : E ≠ ⊥) :
+    ∃ C : FiniteSubcoalgebra k M,
+      C.carrier ≠ ⊥ ∧
+        (sfinrank k (actionExpansion F.carrier C.carrier) : ℚ) /
+            (finrank k C.carrier : ℚ) ≤
+          (sfinrank k (actionExpansion F.carrier E) : ℚ) /
+            (finrank k E : ℚ) := by
+  let F₁ : FiniteSubcoalgebra k H := {
+    carrier := F.carrier ⊔ (unitFiniteSubcoalgebra (k := k) (H := H)).carrier
+    isSubcoalgebra := F.isSubcoalgebra.sup
+      (unitFiniteSubcoalgebra (k := k) (H := H)).isSubcoalgebra
+    finiteDimensional := by infer_instance }
+  obtain ⟨C, hC, hratio⟩ :=
+    exists_finiteSubcoalgebra_action_ratio_le F₁ E hE
+  refine ⟨C, hC, ?_⟩
+  simpa only [F₁, actionSubspace_sup_unit_eq_actionExpansion] using hratio
 
 /-- The Følner-subcoalgebra definition of amenability for a Hopf-module
 coalgebra. -/

@@ -246,7 +246,7 @@ theorem dualMap_commute {f g : Module.End K V} (h : Commute f g) :
   change ell (g (f x)) = ell (f (g x))
   exact congrArg ell (LinearMap.congr_fun h.eq.symm x)
 
-/-- Commuting endomorphisms with split annihilators admit a complete invariant flag. -/
+/-- Commuting endomorphisms with split annihilators possess a complete invariant flag. -/
 theorem completeInvariantFlag_of_commute_of_splits_annihilators
     [Finite ι] [FiniteDimensional K V]
     (f : ι → Module.End K V) (p : ι → K[X])

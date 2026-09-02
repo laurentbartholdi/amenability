@@ -110,11 +110,52 @@ amenability declarations live in `namespace HopfAmenability`.
 The earlier dual-transfer proof is retained for reference under
 `Amenability/Dead` and is not in the main dependency chain.
 
+## Main theorems of the article
+
+The files `Amenability/TheoremA.lean` through
+`Amenability/TheoremJ.lean` expose the article's principal results:
+
+- `isAmenableHopfModuleCoalgebra_iff_hasActionFolnerSubspaces` is the
+  coalgebraic/algebraic amenability equivalence (Theorem A).
+- `IsAmenableHopfModuleCoalgebra.of_surjective_coalgHom` proves permanence
+  under equivariant coalgebra quotients (Theorem B).
+- `isAmenableHopfAlgebra_iff_all_nonzero_moduleCoalgebras` is the
+  all-nonzero-module-coalgebras characterization (Theorem C).
+- `isAmenableHopfAlgebra_of_hopfSubalgebra` proves Hopf-subalgebra
+  permanence from the Takeuchi--Wigner projectivity input (Theorem D).
+- `isAmenableHopfAlgebra_cleftExtension_of_components` and
+  `isAmenableHopfAlgebra_cleftExtension_iff` prove cleft-extension permanence;
+  the normal-basis coalgebra equivalence is derived in
+  `CleftNormalBasis.lean` rather than assumed (Theorem E).
+- `hasActionFolnerSubspaces_of_quotient_permutationModule` and
+  `hasActionFolnerSubspaces_of_isAmenableGroup` give the permutation-module
+  and amenable-group results (Theorem F).
+- `isAmenableLieAlgebra_of_locallySubexponentialGrowth`,
+  `isAmenableLieAlgebra_of_injective`, `isAmenableLieAlgebra_quotient`,
+  `isAmenableLieAlgebra_extension_iff`, and
+  `isAmenableLieAlgebra_directedUnion` are the Lie-algebra permanence
+  statements (Theorem G).
+- `elementaryLieAlgebras_ne_subexponentiallyAmenableLieAlgebras_general`
+  separates the elementary and subexponentially amenable classes (Theorem
+  H). Its positive-characteristic self-similar example is the single
+  explicitly permitted incomplete proof,
+  `exists_psz_subexponential_not_elementary`.
+- `exists_amenable_exponentialGrowth_locallyFiniteByOne` packages
+  the explicit profile-matrix exponential-growth example (Theorem I).
+- `isAmenable_associatedGraded` proves filtered-to-graded amenability from
+  the concrete augmentation filtration and its induced associated-graded
+  realization data (Theorem J).  `TensorFiltrationIntersection.lean`
+  contains the nonseparated tensor-intersection and coideal argument.
+
+The supporting files `GroupPermanence.lean` and
+`GroupCleftExactSequence.lean` derive subgroup and normal-extension
+permanence from Theorems D and E and identify the quotient group algebra with
+the quotient by the explicit augmentation ideal.
+
 ## Imports
 
-The root module `Amenability.lean` imports the generic theorem, both
-specializations, and checks the two public Følner equivalences. They may also
-be imported separately:
+The root module `Amenability.lean` imports and type-checks all ten public
+theorem files. Individual specializations may also be imported separately:
 
 ```lean
 import Amenability.LieAmenability
