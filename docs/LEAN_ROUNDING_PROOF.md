@@ -2,6 +2,14 @@
 
 ## Current public architecture
 
+`HopfAmenability.lean` is now the common specialization layer for amenable
+cocommutative Hopf algebras.  It defines `IsAmenableHopfAlgebra`, bundles the
+Hopf morphisms needed to state Hopf-subalgebra and cleft-extension permanence,
+and exposes the augmentation-associated-graded amenability interface.
+`LieAmenability.lean` and `GroupAmenability.lean` import this common layer.
+Theorem D packages the PBW inclusion and quotient maps into these Hopf
+interfaces for its subalgebra and extension clauses.
+
 The main proof now works directly for a cocommutative Hopf algebra acting on
 an arbitrary Hopf-module coalgebra.  Its public endpoint is
 `HopfAmenability.exists_finiteSubcoalgebra_action_ratio_le` in

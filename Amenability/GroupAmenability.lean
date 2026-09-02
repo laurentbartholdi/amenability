@@ -3,7 +3,7 @@ Copyright (c) 2026 Laurent Bartholdi. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
-import Amenability.HopfModuleCoalgebraRounding
+import Amenability.HopfAmenability
 import Amenability.TensorContraction
 import Mathlib.RepresentationTheory.Basic
 import Mathlib.RingTheory.Coalgebra.MonoidAlgebra
@@ -429,6 +429,87 @@ theorem isAmenableGroupAction_iff_hasFolnerSubspaces
       HasGroupFolnerSubspaces (k := k) (G := G) (X := X) :=
   ⟨IsAmenableGroupAction.hasFolnerSubspaces,
     HasGroupFolnerSubspaces.isAmenableGroupAction⟩
+
+/-- Every finite-dimensional subspace of a group algebra is contained in
+one of the standard finite-dimensional acting subcoalgebras. -/
+theorem exists_groupActingSubcoalgebra_containing
+    [DecidableEq G]
+    (F : Submodule k kG) [FiniteDimensional k F] :
+    ∃ S : Finset G, F ≤ (groupActingSubcoalgebra (k := k) S).carrier := by
+  classical
+  let e := Module.finBasis k F
+  let S : Finset G :=
+    Finset.univ.biUnion fun i => ((e i : kG).coeff.support)
+  refine ⟨S, ?_⟩
+  intro x hx
+  let xF : F := ⟨x, hx⟩
+  have hxsum : x = ∑ i, (e.repr xF) i • (e i : kG) := by
+    simpa only [Submodule.coe_sum, Submodule.coe_smul] using
+      (congrArg Subtype.val (e.sum_repr xF)).symm
+  rw [hxsum, groupActingSubcoalgebra_carrier]
+  apply Submodule.sum_mem
+  intro i hi
+  apply Submodule.smul_mem
+  change (e i : kG) ∈ Submodule.span k
+    ((fun g : G => MonoidAlgebra.single g (1 : k)) ''
+      (↑(insert 1 S) : Set G))
+  rw [← MonoidAlgebra.supported_eq_span_single, MonoidAlgebra.mem_supported]
+  intro g hg
+  exact Finset.mem_insert_of_mem
+    (Finset.mem_biUnion.2 ⟨i, Finset.mem_univ _, hg⟩)
+
+/-- A `G`-set is amenable exactly when its diagonal coalgebra is amenable as
+a module coalgebra over the group Hopf algebra. -/
+theorem isAmenableGroupAction_iff_isAmenableHopfModuleCoalgebra
+    [DecidableEq G] [DecidableEq X] :
+    IsAmenableGroupAction (G := G) (X := X) ↔
+      IsAmenableHopfModuleCoalgebra (k := k) (H := kG) (M := kX) := by
+  constructor
+  · intro hX
+    apply HasActionFolnerSubspaces.isAmenableHopfModuleCoalgebra
+    intro F hF ε hε
+    let _ : FiniteDimensional k F := hF
+    obtain ⟨S, hFS⟩ := exists_groupActingSubcoalgebra_containing
+      (k := k) F
+    obtain ⟨E, hE, hEfd, hratio⟩ :=
+      hX.hasFolnerSubspaces (k := k) S ε hε
+    have hmono : actionExpansion F E ≤
+        actionSubspace (groupActingSubcoalgebra (k := k) S).carrier E := by
+      rw [actionExpansion, sup_le_iff]
+      constructor
+      · intro e he
+        have hOne : (1 : kG) ∈
+            (groupActingSubcoalgebra (k := k) S).carrier := by
+          rw [groupActingSubcoalgebra_carrier]
+          have hone : groupBasis (k := k) (1 : G) ∈
+              Submodule.span k
+                (groupBasis (k := k) '' (↑(insert 1 S) : Set G)) :=
+            Submodule.subset_span
+              ⟨1, Finset.mem_insert_self (1 : G) S, rfl⟩
+          simpa [groupBasis, ← MonoidAlgebra.one_def] using hone
+        simpa using product_mem_actionSubspace hOne he
+      · exact actionSubspace_mono_left hFS E
+    have hdim : (sfinrank k (actionExpansion F E) : ℚ) ≤
+        sfinrank k
+          (actionSubspace (groupActingSubcoalgebra (k := k) S).carrier E) := by
+      exact_mod_cast Submodule.finrank_mono hmono
+    exact ⟨E, hE, hEfd, hdim.trans hratio⟩
+  · intro hX
+    apply HasGroupFolnerSubspaces.isAmenableGroupAction (k := k)
+    intro S ε hε
+    obtain ⟨E, hE, hEfd, hratio⟩ := hX.hasActionFolnerSubspaces
+      (groupActingSubcoalgebra (k := k) S).carrier inferInstance ε hε
+    have hOne : (1 : kG) ∈
+        (groupActingSubcoalgebra (k := k) S).carrier := by
+      rw [groupActingSubcoalgebra_carrier]
+      have hone : groupBasis (k := k) (1 : G) ∈
+          Submodule.span k
+            (groupBasis (k := k) '' (↑(insert 1 S) : Set G)) :=
+        Submodule.subset_span
+          ⟨1, Finset.mem_insert_self (1 : G) S, rfl⟩
+      simpa [groupBasis, ← MonoidAlgebra.one_def] using hone
+    rw [actionExpansion_eq_actionSubspace_of_one_mem hOne] at hratio
+    exact ⟨E, hE, hEfd, hratio⟩
 
 end
 
