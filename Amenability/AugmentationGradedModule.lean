@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
 
-import Amenability.AssociatedGradedAlgebra
+import Amenability.AugmentationGradedAlgebra
 import Mathlib.Algebra.Module.GradedModule
 
 /-! # The module structure on an augmentation associated graded -/

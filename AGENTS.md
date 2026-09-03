@@ -54,28 +54,13 @@ them: many delicate API/coercion issues have already been resolved.
   used by the definition when possible; this avoids proof-irrelevance
   elaboration mismatches.
 
-## Current task
+## Stable architecture and assumptions
 
-Continue proving the main coalgebraic rounding theorem.
+Follow `docs/ARCHITECTURE.md`: structural algebra, coalgebra, filtration, and
+PBW code precedes amenability definitions; Theorems A--J then follow in
+manuscript dependency order. Run `scripts/check_architecture.sh` after moves.
 
-The existing baseline files are already in the repository. The newer proof
-files are being compiled one by one.
-
-Current known state:
-
-- `CoalgebraDensityTransfer.lean` has been corrected and compiles.
-- `TransferDimensions.lean` and `TransferInequality.lean` have user-corrected
-  compiled versions in the repository.
-- `SplitTensorFiltration.lean` is the next file being checked. Previous
-  errors were caused by:
-  - passing `A` positionally where Lean inferred it implicitly;
-  - a missing
-    `Mathlib.LinearAlgebra.TensorProduct.RightExactness` import;
-  - fragile simplification in the kernel proof.
-  Use named arguments such as `(A := A)` throughout.
-- The remaining new files depend on this one; compile them in dependency
-  order rather than debugging several simultaneously.
-
-When a file compiles, proceed to its immediate dependent and keep
-`docs/LEAN_ROUNDING_PROOF.md` up to date if theorem names or interfaces
-change materially.
+The only project-local assumptions are `takeuchiWigner_projective_left` and
+the designated positive-characteristic PSZ proof. No other axiom, `sorry`,
+`admit`, or conclusion-bearing proof package is permitted. Keep
+`docs/LEAN_ROUNDING_PROOF.md` current when interfaces change materially.

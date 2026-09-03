@@ -37,6 +37,8 @@ the two explicitly authorized in the project handoff.
 #print axioms HopfAmenability.hasActionFolnerSubspaces_of_isAmenableGroup
 #print axioms HopfAmenability.isAmenableLieAlgebra_iff_algebraicallyAmenable
 #print axioms HopfAmenability.isAmenableLieAlgebra_iff_isAmenableHopfAlgebra
+#print axioms HopfAmenability.isSubexponential_lieGrowth_iff_ueaGrowth
+#print axioms HopfAmenability.hasSubexponentialLieGrowth_iff_uea
 #print axioms HopfAmenability.isAmenableLieAlgebra_of_locallySubexponentialGrowth
 #print axioms HopfAmenability.isAmenableLieAlgebra_of_isLieAbelian
 #print axioms HopfAmenability.isAmenableLieAlgebra_of_injective
@@ -50,6 +52,7 @@ the two explicitly authorized in the project handoff.
 #print axioms HopfAmenability.elementaryLieAlgebras_ne_subexponentiallyAmenableLieAlgebras_general
 #print axioms HopfAmenability.exists_amenable_exponentialGrowth_locallyFiniteByOne
 #print axioms HopfAmenability.isAmenable_associatedGraded
+#print axioms HopfAmenability.IsAmenableHopfModuleCoalgebra.associatedGraded
 #print axioms HopfAmenability.augmentationGradedHopfHopfAlgebra
 #print axioms HopfAmenability.augmentationGradedIsHopfModuleCoalgebra
 #print axioms HopfAmenability.actionExpansion_separatedInitialSubspace_le

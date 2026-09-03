@@ -5,6 +5,7 @@ Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
 
 import Amenability.TheoremA
+import Amenability.HopfModuleMap
 import Amenability.TensorRightComodule
 import Amenability.HopfCodimOneActionTransfer
 import Amenability.HopfModuleCoalgebraBaseChange
@@ -32,10 +33,6 @@ variable {k : Type u} {H : Type v} {M : Type w} {Q : Type x}
 variable [Field k] [Ring H] [HopfAlgebra k H]
 variable [AddCommGroup M] [Module k M] [Module H M] [IsScalarTower k H M]
 variable [AddCommGroup Q] [Module k Q] [Module H Q] [IsScalarTower k H Q]
-
-/-- A `k`-linear map between `H`-modules intertwines the `H`-actions. -/
-def IsHopfModuleMap (f : M →ₗ[k] Q) : Prop :=
-  ∀ (h : H) (m : M), f (h • m) = h • f m
 
 namespace IsHopfModuleMap
 

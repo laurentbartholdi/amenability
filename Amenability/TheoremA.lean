@@ -5,6 +5,7 @@ Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
 
 import Amenability.HopfModuleCoalgebraRounding
+import Amenability.HopfModuleCoalgebraAmenability
 
 /-!
 # Theorem A: amenability of Hopf-module coalgebras
@@ -25,32 +26,6 @@ universe u v w
 variable {k : Type u} {H : Type v} {M : Type w}
 variable [Field k] [Ring H] [HopfAlgebra k H]
 variable [AddCommGroup M] [Module k M] [Module H M] [IsScalarTower k H M]
-
-/-- The subspace `E + F E` associated to a finite-dimensional test space `F`. -/
-def actionExpansion (F : Submodule k H) (E : Submodule k M) :
-    Submodule k M :=
-  E ⊔ actionSubspace F E
-
-theorem actionExpansion_mono_left {F F' : Submodule k H}
-    (hFF' : F ≤ F') (E : Submodule k M) :
-    actionExpansion F E ≤ actionExpansion F' E := by
-  exact sup_le_sup_left (actionSubspace_mono_left hFF' E) E
-
-theorem actionExpansion_eq_actionSubspace_of_one_mem
-    {F : Submodule k H} (h1 : (1 : H) ∈ F) (E : Submodule k M) :
-    actionExpansion F E = actionSubspace F E := by
-  apply le_antisymm
-  · rw [actionExpansion, sup_le_iff]
-    exact ⟨fun m hm => by simpa using product_mem_actionSubspace h1 hm,
-      le_rfl⟩
-  · exact le_sup_right
-
-theorem finiteDimensional_actionExpansion
-    (F : Submodule k H) (E : Submodule k M)
-    [FiniteDimensional k F] [FiniteDimensional k E] :
-    FiniteDimensional k (actionExpansion F E) := by
-  rw [actionExpansion]
-  infer_instance
 
 /-- The one-dimensional subcoalgebra spanned by the unit of a Hopf algebra. -/
 def unitFiniteSubcoalgebra : FiniteSubcoalgebra k H where
@@ -91,16 +66,6 @@ theorem actionSubspace_sup_unit_eq_actionExpansion
     ← actionSubspace_eq_map₂, ← actionSubspace_eq_map₂, hunit,
     actionExpansion, sup_comm]
 
-/-- Elek's ordinary finite-dimensional Følner-subspace condition for an
-`H`-module. -/
-def HasActionFolnerSubspaces : Prop :=
-  ∀ (F : Submodule k H), FiniteDimensional k F →
-    ∀ ε : ℚ, 0 < ε →
-      ∃ E : Submodule k M,
-        E ≠ ⊥ ∧ FiniteDimensional k E ∧
-          (sfinrank k (actionExpansion F E) : ℚ) ≤
-            (1 + ε) * sfinrank k E
-
 section Coalgebra
 
 variable [Coalgebra.IsCocomm k H]
@@ -128,16 +93,6 @@ theorem exists_finiteSubcoalgebra_expansion_ratio_le
     exists_finiteSubcoalgebra_action_ratio_le F₁ E hE
   refine ⟨C, hC, ?_⟩
   simpa only [F₁, actionSubspace_sup_unit_eq_actionExpansion] using hratio
-
-/-- The Følner-subcoalgebra definition of amenability for a Hopf-module
-coalgebra. -/
-def IsAmenableHopfModuleCoalgebra : Prop :=
-  ∀ (F : Submodule k H), FiniteDimensional k F →
-    ∀ ε : ℚ, 0 < ε →
-      ∃ C : FiniteSubcoalgebra k M,
-        C.carrier ≠ ⊥ ∧
-          (sfinrank k (actionExpansion F C.carrier) : ℚ) ≤
-            (1 + ε) * finrank k C.carrier
 
 omit [Coalgebra.IsCocomm k H] [IsHopfModuleCoalgebra k H M] in
 /-- Følner subcoalgebras are particular Følner subspaces. -/

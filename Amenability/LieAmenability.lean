@@ -3,7 +3,8 @@ Copyright (c) 2026 Laurent Bartholdi. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
-import Amenability.HopfAmenability
+import Amenability.HopfAlgebraAmenability
+import Amenability.TheoremA
 import Amenability.TensorProductMap
 import Amenability.UniversalEnvelopingCoalgebra
 import Mathlib.RingTheory.Coalgebra.CoassocSimps

@@ -63,6 +63,11 @@ under subalgebras, quotients, extensions, and directed unions. -/
 #check HopfAmenability.isAmenableLieAlgebra_extension_iff
 #check HopfAmenability.isAmenableLieAlgebra_directedUnion
 
+/- Smith's theorem: for a finitely generated Lie algebra, subexponential
+Lie growth is equivalent to locally subexponential growth of its UEA. -/
+#check HopfAmenability.isSubexponential_lieGrowth_iff_ueaGrowth
+#check HopfAmenability.hasSubexponentialLieGrowth_iff_uea
+
 /- Theorem H: elementary and subexponentially amenable Lie algebras form
 distinct classes in every characteristic. -/
 #check HopfAmenability.IsElementaryLieObject.isSubexponentiallyAmenable
@@ -77,6 +82,7 @@ one-dimensional quotient. -/
 /- Theorem J: amenability passes unconditionally to the concrete
 augmentation-associated graded Hopf-module coalgebra. -/
 #check HopfAmenability.isAmenable_associatedGraded
+#check HopfAmenability.IsAmenableHopfModuleCoalgebra.associatedGraded
 
 /- Supporting group permanence: group amenability agrees with amenability of
 the group Hopf algebra, descends to subgroups, and is preserved and reflected

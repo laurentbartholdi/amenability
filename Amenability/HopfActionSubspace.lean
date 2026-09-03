@@ -91,6 +91,30 @@ noncomputable instance instFiniteDimensionalActionSubspace
     FiniteDimensional k (actionSubspace F E) :=
   finiteDimensional_actionSubspace F E
 
+/-- The subspace `E + F E` associated to a finite-dimensional test space `F`. -/
+def actionExpansion (F : Submodule k H) (E : Submodule k M) :
+    Submodule k M := E ⊔ actionSubspace F E
+
+theorem actionExpansion_mono_left {F F' : Submodule k H}
+    (hFF' : F ≤ F') (E : Submodule k M) :
+    actionExpansion F E ≤ actionExpansion F' E :=
+  sup_le_sup_left (actionSubspace_mono_left hFF' E) E
+
+theorem actionExpansion_eq_actionSubspace_of_one_mem
+    {F : Submodule k H} (h1 : (1 : H) ∈ F) (E : Submodule k M) :
+    actionExpansion F E = actionSubspace F E := by
+  apply le_antisymm
+  · rw [actionExpansion, sup_le_iff]
+    exact ⟨fun m hm => by simpa using product_mem_actionSubspace h1 hm, le_rfl⟩
+  · exact le_sup_right
+
+theorem finiteDimensional_actionExpansion
+    (F : Submodule k H) (E : Submodule k M)
+    [FiniteDimensional k F] [FiniteDimensional k E] :
+    FiniteDimensional k (actionExpansion F E) := by
+  rw [actionExpansion]
+  infer_instance
+
 section Coalgebra
 
 variable [Coalgebra k M] [IsHopfModuleCoalgebra k H M]

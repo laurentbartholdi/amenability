@@ -28,13 +28,14 @@ chain:
   `HasLieFolnerSubspaces`.
 
 The augmentation-associated-graded endpoint is unconditional.
-`AssociatedGradedHopf.lean` and `AssociatedGradedHopfModule.lean` install the
+`AugmentationGradedHopf.lean` and
+`AugmentationGradedHopfModuleCoalgebra.lean` install the
 actual Hopf and Hopf-module-coalgebra structures. `FilteredInitial.lean`
 constructs homogeneous lifts and proves the finite-dimensional telescoping
-formula for initial forms. `AugmentationAssociatedGraded.lean` applies this
+formula for initial forms. `AugmentationLeadingSymbols.lean` applies this
 to the separated augmentation quotient and proves compatibility with action
-expansion. Consequently `TheoremJ.lean` no longer takes an
-`AugmentationAssociatedGradedData` argument.
+expansion. Consequently `TheoremJ.lean` is a direct concrete proof with no
+abstract realization-data argument.
 
 The standard coalgebra, cocommutativity, bialgebra, and Hopf instances for a
 universal enveloping algebra are isolated in
@@ -1154,5 +1155,5 @@ For Theorem J, new concrete filtration lemmas live in
 `Amenability/AugmentationFiltration.lean`.  Multiplication, action, the
 degree-one coproduct estimate, tensor-filtration multiplication, and the
 full augmentation-filtration coproduct estimate are proved there.  Continue
-constructing the actual graded operations rather than adding fields to
-`AugmentationAssociatedGradedData`.
+The actual graded operations are constructed directly; no abstract proof
+package is part of the current argument.

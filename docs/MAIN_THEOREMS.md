@@ -5,13 +5,13 @@
 | A | `exists_finiteSubcoalgebra_expansion_ratio_le`, `isAmenableHopfModuleCoalgebra_iff_hasActionFolnerSubspaces` | `TheoremA.lean` |
 | B | `IsAmenableHopfModuleCoalgebra.of_surjective_coalgHom` | `TheoremB.lean` |
 | C | `isAmenableHopfAlgebra_iff_all_nonzero_moduleCoalgebras` | `TheoremC.lean` |
-| D | `isAmenableHopfAlgebra_of_hopfSubalgebra` | `TheoremD.lean`, `HopfAmenability.lean` |
-| E | `isAmenableHopfAlgebra_cleftExtension_of_components`, `isAmenableHopfAlgebra_cleftExtension_iff` | `CleftNormalBasis.lean`, `CleftAmenability.lean`, `TheoremE.lean` |
+| D | `isAmenableHopfAlgebra_of_hopfSubalgebra` | `TheoremD.lean` |
+| E | `isAmenableHopfAlgebra_cleftExtension_of_components`, `isAmenableHopfAlgebra_cleftExtension_iff` | `TheoremE.lean` |
 | F | `hasActionFolnerSubspaces_of_quotient_permutationModule`, `hasActionFolnerSubspaces_of_isAmenableGroup` | `TheoremF.lean` |
-| G | `isAmenableLieAlgebra_of_locallySubexponentialGrowth`, `isAmenableLieAlgebra_of_injective`, `isAmenableLieAlgebra_quotient`, `isAmenableLieAlgebra_extension_iff`, `isAmenableLieAlgebra_directedUnion` | `UniversalEnvelopingPBW.lean`, `LieGrowth.lean`, `TheoremG.lean` |
+| G | `isAmenableLieAlgebra_of_locallySubexponentialGrowth`, `isAmenableLieAlgebra_of_injective`, `isAmenableLieAlgebra_quotient`, `isAmenableLieAlgebra_extension_iff`, `isAmenableLieAlgebra_directedUnion` | `TheoremG.lean` |
 | H | `elementaryLieAlgebras_ne_subexponentiallyAmenableLieAlgebras_general` | `TheoremH.lean` |
 | I | `exists_amenable_exponentialGrowth_locallyFiniteByOne` | `LocallyMatrixProfile.lean`, `ShiftProfileAlgebra.lean`, `ProfileLieExample.lean`, `TheoremI.lean` |
-| J | `isAmenable_associatedGraded` | `TensorFiltrationIntersection.lean`, `HopfAmenability.lean`, `TheoremJ.lean` |
+| J | `IsAmenableHopfModuleCoalgebra.associatedGraded`, `isAmenable_associatedGraded` | `TheoremJ.lean` |
 
 `Amenability.lean` imports and checks all endpoints. `AxiomAudit.lean` prints
 their assumptions. The sole project axiom is

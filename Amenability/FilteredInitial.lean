@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
 
-import Amenability.AssociatedGradedHopfModule
+import Amenability.AugmentationGradedHopfModuleCoalgebra
+import Amenability.HopfActionSubspace
 import Mathlib.RingTheory.Artinian.Module
 import Mathlib.LinearAlgebra.DirectSum.Finite
+import Mathlib.LinearAlgebra.Dimension.DivisionRing
 
 /-! # Initial subspaces for separated descending filtrations -/
 

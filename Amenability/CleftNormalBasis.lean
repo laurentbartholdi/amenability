@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
 
-import Amenability.HopfAmenability
+import Amenability.HopfExactSequence
 import Mathlib.RingTheory.HopfAlgebra.Quotient
 
 /-!
@@ -37,14 +37,6 @@ def comulHopfAlgebraHom :
   toAlgHom := (Bialgebra.comulBialgHom k B).toAlgHom
   map_counit := (Bialgebra.comulBialgHom k B).counit_comp
   map_comul := (Bialgebra.comulBialgHom k B).map_comp_comul
-
-/-- A Hopf morphism viewed as a coalgebra morphism. -/
-def HopfAlgebraHom.toCoalgHom
-    {D : Type*} [Ring D] [HopfAlgebra k D]
-    (f : HopfAlgebraHom (k := k) (H := B) D) : B →ₗc[k] D where
-  toLinearMap := f.toAlgHom.toLinearMap
-  counit_comp := f.map_counit
-  map_comp_comul := f.map_comul
 
 omit [Coalgebra.IsCocomm k B] in
 /-- Hopf algebra morphisms commute with antipodes. -/
@@ -195,44 +187,6 @@ def CleftExactSequence.projectionCoalgHom : B →ₗc[k] C where
   toLinearMap := e.projection.toAlgHom.toLinearMap
   counit_comp := e.projection.map_counit
   map_comp_comul := e.projection.map_comul
-
-omit [IsCocomm k C] in
-/-- For cocommutative Hopf algebras, a right coinvariant is also a left
-coinvariant. -/
-theorem leftCoaction_eq_of_mem_rightCoinvariants
-    (p : HopfAlgebraHom (k := k) (H := B) C) (b : B)
-    (hb : b ∈ rightCoinvariants p) :
-    TensorProduct.map p.toAlgHom.toLinearMap LinearMap.id
-        (Coalgebra.comul (R := k) b) = 1 ⊗ₜ[k] b := by
-  have hright :
-      TensorProduct.map LinearMap.id p.toAlgHom.toLinearMap
-          (Coalgebra.comul (R := k) b) = b ⊗ₜ[k] 1 := by
-    change ((TensorProduct.map LinearMap.id p.toAlgHom.toLinearMap).comp
-        (Coalgebra.comul (R := k) (A := B)) -
-      (TensorProduct.mk k B C).flip 1) b = 0 at hb
-    simpa [LinearMap.sub_apply] using sub_eq_zero.mp hb
-  have hnat (z : B ⊗[k] B) :
-      TensorProduct.map p.toAlgHom.toLinearMap LinearMap.id
-          ((TensorProduct.comm k B B).toLinearMap z) =
-        (TensorProduct.comm k B C).toLinearMap
-          (TensorProduct.map LinearMap.id p.toAlgHom.toLinearMap z) := by
-    induction z using TensorProduct.induction_on with
-    | zero => simp
-    | add x y hx hy =>
-        simpa only [map_add] using congrArg₂ (fun u v => u + v) hx hy
-    | tmul x y => simp
-  calc
-    _ = TensorProduct.map p.toAlgHom.toLinearMap LinearMap.id
-        ((TensorProduct.comm k B B).toLinearMap
-          (Coalgebra.comul (R := k) b)) := by
-            exact congrArg
-              (TensorProduct.map p.toAlgHom.toLinearMap LinearMap.id)
-              (Coalgebra.comm_comul k b).symm
-    _ = (TensorProduct.comm k B C).toLinearMap
-        (TensorProduct.map LinearMap.id p.toAlgHom.toLinearMap
-          (Coalgebra.comul (R := k) b)) := hnat _
-    _ = (TensorProduct.comm k B C).toLinearMap (b ⊗ₜ[k] 1) := by rw [hright]
-    _ = 1 ⊗ₜ[k] b := by simp
 
 /-- The convolution inverse `S_B ∘ σ` of the coalgebra section. -/
 def CleftExactSequence.sectionAntipode : C →ₗ[k] B :=

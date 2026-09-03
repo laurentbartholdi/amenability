@@ -1,5 +1,7 @@
 # Amenability
 
+[![Lean CI](https://github.com/laurentbartholdi/amenability/actions/workflows/lean_action_ci.yml/badge.svg?branch=main&event=push)](https://github.com/laurentbartholdi/amenability/actions/workflows/lean_action_ci.yml)
+
 This Lean 4 project proves coalgebraic rounding theorems for cocommutative
 Hopf algebras, Hopf-module coalgebras, Lie-module coalgebras, and linearized
 group actions.
@@ -152,7 +154,7 @@ The files `Amenability/TheoremA.lean` through
   the concrete augmentation-associated graded, with no realization-data
   assumption (Theorem J).  `TensorFiltrationIntersection.lean` contains the
   nonseparated tensor-intersection and coideal argument;
-  `FilteredInitial.lean` and `AugmentationAssociatedGraded.lean` construct
+  `FilteredInitial.lean` and `AugmentationLeadingSymbols.lean` construct
   homogeneous lifts and dimension-preserving initial subspaces.
 
 The supporting files `GroupPermanence.lean` and

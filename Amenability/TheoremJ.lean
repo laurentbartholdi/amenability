@@ -4,7 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
 
-import Amenability.AugmentationAssociatedGraded
+import Amenability.AugmentationLeadingSymbols
+import Amenability.TheoremB
 
 /-!
 # Theorem J: amenability of the associated graded module coalgebra
@@ -24,10 +25,21 @@ variable [Coalgebra.IsCocomm k H]
 variable [AddCommGroup M] [Module k M] [Module H M] [IsScalarTower k H M]
 variable [Coalgebra k M] [IsHopfModuleCoalgebra k H M]
 
+/-- Amenability descends canonically to the separated augmentation quotient. -/
+theorem IsAmenableHopfModuleCoalgebra.augmentationSeparated
+    (hM : IsAmenableHopfModuleCoalgebra (k := k) (H := H) (M := M)) :
+    IsAmenableHopfModuleCoalgebra
+      (k := k) (H := H)
+      (M := AugmentationSeparatedModule (k := k) (H := H) (M := M)) :=
+  hM.of_surjective_coalgHom
+    (augmentationSeparatedQuotient (k := k) (H := H) (M := M))
+    (augmentationSeparatedQuotient_equivariant (k := k) (H := H) (M := M))
+    (augmentationSeparatedQuotient_surjective (k := k) (H := H) (M := M))
+
 /-- **Theorem J.** Amenability passes to the concrete augmentation-associated
 graded Hopf-module coalgebra.  All quotient, lifting, and leading-symbol data
 are constructed canonically in the supporting files. -/
-theorem isAmenable_associatedGraded
+theorem IsAmenableHopfModuleCoalgebra.associatedGraded
     (hM : IsAmenableHopfModuleCoalgebra (k := k) (H := H) (M := M)) :
     IsAmenableHopfModuleCoalgebra
       (k := k) (H := AugmentationGradedHopf (k := k) (H := H))
@@ -75,12 +87,20 @@ theorem isAmenable_associatedGraded
     _ = (1 + ε) * sfinrank k Egr := by
       rw [finrank_separatedInitialSubspace E]
 
+/-- Manuscript-compatible alias for Theorem J. -/
+theorem isAmenable_associatedGraded
+    (hM : IsAmenableHopfModuleCoalgebra (k := k) (H := H) (M := M)) :
+    IsAmenableHopfModuleCoalgebra
+      (k := k) (H := AugmentationGradedHopf (k := k) (H := H))
+      (M := AugmentationGradedModule (k := k) (H := H) (M := M)) :=
+  hM.associatedGraded
+
 /-- Manuscript-letter alias for Theorem J. -/
 theorem theoremJ_associatedGraded
     (hM : IsAmenableHopfModuleCoalgebra (k := k) (H := H) (M := M)) :
     IsAmenableHopfModuleCoalgebra
       (k := k) (H := AugmentationGradedHopf (k := k) (H := H))
       (M := AugmentationGradedModule (k := k) (H := H) (M := M)) :=
-  isAmenable_associatedGraded hM
+  hM.associatedGraded
 
 end HopfAmenability

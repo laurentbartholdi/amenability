@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
 
-import Amenability.AssociatedGradedHopf
+import Amenability.AugmentationGradedHopf
 
 /-! # Hopf-module coalgebra structure on the augmentation associated graded -/
 

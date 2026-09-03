@@ -4,7 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
 
-import Amenability.HopfAmenability
+import Amenability.HopfModuleCoalgebra
+import Amenability.HopfActionSubspace
+import Amenability.HopfModuleMap
+import Amenability.TensorFiltrationIntersection
+import Mathlib.RingTheory.HopfAlgebra.Convolution
 
 /-! # Structural lemmas for the augmentation filtration -/
 
@@ -18,6 +22,122 @@ universe u v w
 
 variable {k : Type u} {H : Type v}
 variable [Field k] [Ring H] [HopfAlgebra k H]
+
+/-- The augmentation ideal of a bialgebra. -/
+def augmentationIdeal : Ideal H :=
+  RingHom.ker (Bialgebra.counitAlgHom k H).toRingHom
+
+/-- The descending augmentation filtration. -/
+def augmentationFiltration (n : ℕ) : Submodule k H :=
+  ((augmentationIdeal (k := k) (H := H) ^ n : Ideal H) :
+    Submodule H H).restrictScalars k
+
+theorem augmentationFiltration_antitone :
+    Antitone (augmentationFiltration (k := k) (H := H)) := by
+  intro m n hmn
+  exact Submodule.restrictScalars_mono k (Ideal.pow_le_pow_right hmn)
+
+/-- The augmentation filtration on a left Hopf module. -/
+def augmentationModuleFiltration
+    {M : Type w} [AddCommGroup M] [Module k M] [Module H M]
+    [IsScalarTower k H M] (n : ℕ) : Submodule k M :=
+  actionSubspace (augmentationFiltration (k := k) (H := H) n) ⊤
+
+theorem augmentationModuleFiltration_antitone
+    {M : Type w} [AddCommGroup M] [Module k M] [Module H M]
+    [IsScalarTower k H M] :
+    Antitone (augmentationModuleFiltration (k := k) (H := H) (M := M)) := by
+  intro m n hmn
+  exact actionSubspace_mono_left
+    (augmentationFiltration_antitone (k := k) (H := H) hmn) ⊤
+
+/-- The infinite augmentation intersection is stable under the action. -/
+theorem augmentationModuleFiltration_iInf_stable
+    {M : Type w} [AddCommGroup M] [Module k M] [Module H M]
+    [IsScalarTower k H M] (h : H) (x : M)
+    (hx : x ∈ ⨅ n, augmentationModuleFiltration
+      (k := k) (H := H) (M := M) n) :
+    h • x ∈ ⨅ n, augmentationModuleFiltration
+      (k := k) (H := H) (M := M) n := by
+  apply (Submodule.mem_iInf _).2
+  intro n
+  obtain ⟨z, hzx⟩ := (Submodule.mem_iInf _).1 hx n
+  rw [← hzx]
+  clear hx hzx x
+  induction z with
+  | zero => simp
+  | add z z' hz hz' => simpa [smul_add] using Submodule.add_mem _ hz hz'
+  | tmul a m =>
+      rw [restrictedHopfModuleAction_tmul, ← mul_smul]
+      apply product_mem_actionSubspace
+      · change h * (a : H) ∈
+          (augmentationIdeal (k := k) (H := H) ^ n : Ideal H)
+        exact (augmentationIdeal (k := k) (H := H) ^ n).mul_mem_left h a.property
+      · exact Submodule.mem_top
+
+theorem augmentationModuleFiltration_zero
+    {M : Type w} [AddCommGroup M] [Module k M] [Module H M]
+    [IsScalarTower k H M] :
+    augmentationModuleFiltration (k := k) (H := H) (M := M) 0 = ⊤ := by
+  apply top_unique
+  intro x _
+  change x ∈ actionSubspace
+    (augmentationFiltration (k := k) (H := H) 0) ⊤
+  simpa using product_mem_actionSubspace
+    (show (1 : H) ∈ augmentationFiltration (k := k) (H := H) 0 by
+      change (1 : H) ∈ (augmentationIdeal (k := k) (H := H) ^ 0 : Ideal H)
+      change (1 : H) ∈ (1 : Ideal H)
+      rw [Ideal.one_eq_top]
+      exact Submodule.mem_top)
+    (show x ∈ (⊤ : Submodule k M) from Submodule.mem_top)
+
+theorem augmentationModuleFiltration_counit_one
+    {M : Type w} [AddCommGroup M] [Module k M] [Module H M]
+    [IsScalarTower k H M] [Coalgebra k M] [IsHopfModuleCoalgebra k H M]
+    (x : M)
+    (hx : x ∈ augmentationModuleFiltration (k := k) (H := H) (M := M) 1) :
+    Coalgebra.counit (R := k) x = 0 := by
+  rcases hx with ⟨z, rfl⟩
+  induction z with
+  | zero => simp
+  | add x y hx hy => simp [hx, hy]
+  | tmul h m =>
+      rw [restrictedHopfModuleAction_tmul, counit_smul]
+      have hh : (h : H) ∈ augmentationIdeal (k := k) (H := H) := by
+        have hp := h.property
+        change (h : H) ∈
+          ((augmentationIdeal (k := k) (H := H) : Ideal H) : Submodule H H) ^ 1 at hp
+        rw [Submodule.pow_one] at hp
+        exact hp
+      have heps : Coalgebra.counit (R := k) (h : H) = 0 := hh
+      rw [heps, zero_mul]
+
+/-- The infinite intersection has zero counit. -/
+theorem augmentationModuleFiltration_iInf_counit
+    {M : Type w} [AddCommGroup M] [Module k M] [Module H M]
+    [IsScalarTower k H M] [Coalgebra k M] [IsHopfModuleCoalgebra k H M]
+    (x : M)
+    (hx : x ∈ ⨅ n, augmentationModuleFiltration
+      (k := k) (H := H) (M := M) n) :
+    Coalgebra.counit (R := k) x = 0 :=
+  augmentationModuleFiltration_counit_one x
+    ((Submodule.mem_iInf _).1 hx 1)
+
+/-- The underlying augmentation-graded module. -/
+abbrev AugmentationGradedModule
+    {M : Type w} [AddCommGroup M] [Module k M] [Module H M]
+    [IsScalarTower k H M] :=
+  DirectSum ℕ fun n =>
+    augmentationModuleFiltration (k := k) (H := H) (M := M) n ⧸
+      (augmentationModuleFiltration (k := k) (H := H) (M := M) (n + 1)).comap
+        (augmentationModuleFiltration (k := k) (H := H) (M := M) n).subtype
+
+/-- The underlying augmentation-graded Hopf vector space. -/
+abbrev AugmentationGradedHopf :=
+  DirectSum ℕ fun n =>
+    augmentationFiltration (k := k) (H := H) n ⧸
+      (augmentationFiltration (k := k) (H := H) (n + 1)).comap
+        (augmentationFiltration (k := k) (H := H) n).subtype
 
 /-- Multiplication respects powers of the augmentation ideal. -/
 theorem augmentationFiltration_mul_le (i j : ℕ) :
@@ -605,21 +725,6 @@ theorem augmentationSeparatedQuotient_ker
     change (Submodule.Quotient.mk x = 0) ↔
       x ∈ augmentationInfinity (k := k) (H := H) (M := M)
     exact Submodule.Quotient.mk_eq_zero _
-
-/-- Amenability descends canonically to the separated augmentation
-quotient. -/
-theorem IsAmenableHopfModuleCoalgebra.augmentationSeparated
-    {M : Type w} [AddCommGroup M] [Module k M] [Module H M]
-    [IsScalarTower k H M] [Coalgebra k M] [IsHopfModuleCoalgebra k H M]
-    [Coalgebra.IsCocomm k H]
-    (hM : IsAmenableHopfModuleCoalgebra (k := k) (H := H) (M := M)) :
-    IsAmenableHopfModuleCoalgebra
-      (k := k) (H := H)
-      (M := AugmentationSeparatedModule (k := k) (H := H) (M := M)) :=
-  hM.of_surjective_coalgHom
-    (augmentationSeparatedQuotient (k := k) (H := H) (M := M))
-    (augmentationSeparatedQuotient_equivariant (k := k) (H := H) (M := M))
-    (augmentationSeparatedQuotient_surjective (k := k) (H := H) (M := M))
 
 end
 
