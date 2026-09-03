@@ -2,9 +2,9 @@
 set -euo pipefail
 
 obsolete='Augmentation''AssociatedGradedData'
-! rg -n "$obsolete" Amenability
+! grep -R -n -- "$obsolete" Amenability
 
-! rg -n '^import Amenability\.(Theorem[A-J]|HopfAmenability|HopfAlgebraAmenability|CleftAmenability|ProjectiveAmenability)' \
+! grep -n -E '^import Amenability\.(Theorem[A-J]|HopfAmenability|HopfAlgebraAmenability|CleftAmenability|ProjectiveAmenability)' \
   Amenability/AugmentationFiltration.lean \
   Amenability/AugmentationGradedAlgebra.lean \
   Amenability/AugmentationGradedModule.lean \
@@ -17,12 +17,12 @@ obsolete='Augmentation''AssociatedGradedData'
   Amenability/TripleFiltrationGraded.lean \
   Amenability/FilteredInitial.lean
 
-! rg -n '^import Amenability\.(Theorem[A-J]|LieGeneratorTest|Hopf.*Amenability)' \
+! grep -n -E '^import Amenability\.(Theorem[A-J]|LieGeneratorTest|Hopf.*Amenability)' \
   Amenability/SubexponentialGrowth.lean \
   Amenability/AlgebraGrowth.lean \
   Amenability/LieGrowth.lean \
   Amenability/UniversalEnvelopingGrowth.lean
 
 for f in Amenability/Theorem{A,B,C,D,E,F,G,H,I,J}.lean; do
-  rg -q '(^|[[:space:]])(theorem|def|structure|instance)[[:space:]]' "$f"
+  grep -q -E '(^|[[:space:]])(theorem|def|structure|instance)[[:space:]]' "$f"
 done
