@@ -24,4 +24,4 @@ jobs:
           lake env lean Amenability/AxiomAudit.lean
           lake env lean Amenability/Tests/ManuscriptConformance.lean
           bash scripts/check_architecture.sh
-      - uses: leanprover-community/docgen-action@v1
+#      - uses: leanprover-community/docgen-action@v1
