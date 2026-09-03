@@ -4,7 +4,7 @@
 
 This Lean 4 project proves coalgebraic rounding theorems for cocommutative
 Hopf algebras, Hopf-module coalgebras, Lie-module coalgebras, and linearized
-group actions.
+group actions. It is a companion to the article "Amenability of Lie, group and Hopf algebras".
 
 ## Generic Hopf-module-coalgebra rounding
 
