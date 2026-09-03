@@ -5,7 +5,7 @@ Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
 
 import Amenability.TheoremB
-import Amenability.LieAmenability
+import Amenability.LieGeneratorTest
 import Amenability.CoalgebraInjective
 import Amenability.UniversalEnvelopingPBW
 import Amenability.ElementaryLieAlgebra
@@ -16,9 +16,10 @@ import Mathlib.LinearAlgebra.Basis.Prod
 # Theorem D: permanence properties for amenable Lie algebras
 
 This file formalizes the five closure assertions collected as Theorem D in
-the accompanying article.  We use the generator-test formulation: a Lie
-algebra is amenable when the regular module of its universal enveloping
-algebra has finite-dimensional Følner subspaces.
+the accompanying article.  The public predicate is the manuscript's
+finite-Lie-subspace, finite-subcoalgebra condition; the generator test proved
+in `LieGeneratorTest` lets the internal permanence arguments use the regular
+universal-enveloping module.
 -/
 
 open Coalgebra Module TensorProduct
@@ -173,7 +174,7 @@ noncomputable def LieIdeal.liftedQuotientMonomial {α β : Type*}
     (word.1.map fun j => toLex (Sum.inl j : β ⊕ α))
 
 /-- The PBW linear section `U(L/I) → U(L)` attached to the split basis. -/
-noncomputable def LieIdeal.ueaLinearSection [CharZero k]
+noncomputable def LieIdeal.ueaLinearSection
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I) :
@@ -183,7 +184,7 @@ noncomputable def LieIdeal.ueaLinearSection [CharZero k]
     (LieIdeal.liftedQuotientMonomial I bQ bI)
 
 @[simp]
-theorem LieIdeal.ueaLinearSection_orderedMonomial [CharZero k]
+theorem LieIdeal.ueaLinearSection_orderedMonomial
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I)
@@ -197,7 +198,7 @@ theorem LieIdeal.ueaLinearSection_orderedMonomial [CharZero k]
     (LieIdeal.liftedQuotientMonomial I bQ bI) word
 
 @[simp]
-theorem LieIdeal.pbwMap_liftedQuotientMonomial [CharZero k]
+theorem LieIdeal.pbwMap_liftedQuotientMonomial
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I)
@@ -221,7 +222,7 @@ theorem LieIdeal.pbwMap_liftedQuotientMonomial [CharZero k]
 
 /-- The enveloping-algebra quotient map is a left inverse of the PBW
 linear section. -/
-theorem LieIdeal.pbwMap_comp_ueaLinearSection [CharZero k]
+theorem LieIdeal.pbwMap_comp_ueaLinearSection
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I) :
@@ -238,7 +239,7 @@ theorem LieIdeal.pbwMap_comp_ueaLinearSection [CharZero k]
 
 /-- Multiplication after the PBW quotient section and the enveloping map of
 the ideal. -/
-noncomputable def LieIdeal.extensionPBWMap [CharZero k]
+noncomputable def LieIdeal.extensionPBWMap
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I) :
@@ -251,7 +252,7 @@ noncomputable def LieIdeal.extensionPBWMap [CharZero k]
         (LieIdeal.inclusionLieHom I)).toLinearMap)
 
 @[simp]
-theorem LieIdeal.extensionPBWMap_tmul [CharZero k]
+theorem LieIdeal.extensionPBWMap_tmul
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I)
@@ -263,7 +264,7 @@ theorem LieIdeal.extensionPBWMap_tmul [CharZero k]
           (LieIdeal.inclusionLieHom I) a := by
   rfl
 
-theorem LieIdeal.pbwMap_ideal_pbwMonomial [CharZero k]
+theorem LieIdeal.pbwMap_ideal_pbwMonomial
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I) (word : List α) :
@@ -284,7 +285,7 @@ theorem LieIdeal.pbwMap_ideal_pbwMonomial [CharZero k]
 
 /-- On PBW basis tensors, extension multiplication is the corresponding
 ordered monomial in the split basis. -/
-theorem LieIdeal.extensionPBWMap_basis_tmul [CharZero k]
+theorem LieIdeal.extensionPBWMap_basis_tmul
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I)
@@ -311,7 +312,7 @@ theorem LieIdeal.extensionPBWMap_basis_tmul [CharZero k]
 
 /-- PBW multiplication gives the vector-space tensor decomposition
 `U(L/I) ⊗ U(I) ≃ U(L)`. -/
-noncomputable def LieIdeal.extensionPBWEquiv [CharZero k]
+noncomputable def LieIdeal.extensionPBWEquiv
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I) :
@@ -343,7 +344,7 @@ noncomputable def LieIdeal.extensionPBWEquiv [CharZero k]
   exact e.bijective
 
 @[simp]
-theorem LieIdeal.extensionPBWEquiv_apply [CharZero k]
+theorem LieIdeal.extensionPBWEquiv_apply
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I)
@@ -398,7 +399,7 @@ theorem UniversalEnvelopingAlgebra.wordSplittings_pairwise
   exact ⟨hword.sublist hl, hword.sublist hr⟩
 
 /-- The PBW quotient section respects comultiplication. -/
-theorem LieIdeal.comul_ueaLinearSection [CharZero k]
+theorem LieIdeal.comul_ueaLinearSection
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I) :
@@ -448,7 +449,7 @@ theorem LieIdeal.comul_ueaLinearSection [CharZero k]
   rfl
 
 /-- The PBW quotient section also preserves the counit. -/
-theorem LieIdeal.counit_ueaLinearSection [CharZero k]
+theorem LieIdeal.counit_ueaLinearSection
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I) :
@@ -476,7 +477,7 @@ theorem LieIdeal.counit_ueaLinearSection [CharZero k]
         zero_mul, zero_mul]
 
 /-- The PBW quotient section as a coalgebra morphism. -/
-noncomputable def LieIdeal.ueaLinearSectionCoalgHom [CharZero k]
+noncomputable def LieIdeal.ueaLinearSectionCoalgHom
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I) :
@@ -487,7 +488,7 @@ noncomputable def LieIdeal.ueaLinearSectionCoalgHom [CharZero k]
   map_comp_comul := (LieIdeal.comul_ueaLinearSection I bQ bI).symm
 
 @[simp]
-theorem LieIdeal.ueaLinearSectionCoalgHom_apply [CharZero k]
+theorem LieIdeal.ueaLinearSectionCoalgHom_apply
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I)
@@ -574,7 +575,7 @@ theorem FiniteSubcoalgebra.image_carrier
   rfl
 
 /-- The PBW tensor decomposition as a coalgebra map. -/
-noncomputable def LieIdeal.extensionPBWCoalgHom [CharZero k]
+noncomputable def LieIdeal.extensionPBWCoalgHom
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I) :
@@ -588,7 +589,7 @@ noncomputable def LieIdeal.extensionPBWCoalgHom [CharZero k]
         (LieIdeal.inclusionLieHom I)))
 
 @[simp]
-theorem LieIdeal.extensionPBWCoalgHom_apply [CharZero k]
+theorem LieIdeal.extensionPBWCoalgHom_apply
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I)
@@ -599,7 +600,7 @@ theorem LieIdeal.extensionPBWCoalgHom_apply [CharZero k]
   rfl
 
 /-- The PBW tensor decomposition as a coalgebra equivalence. -/
-noncomputable def LieIdeal.extensionPBWCoalgEquiv [CharZero k]
+noncomputable def LieIdeal.extensionPBWCoalgEquiv
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I) :
@@ -612,7 +613,7 @@ noncomputable def LieIdeal.extensionPBWCoalgEquiv [CharZero k]
     exact (LieIdeal.extensionPBWEquiv I bQ bI).bijective)
 
 @[simp]
-theorem LieIdeal.extensionPBWCoalgEquiv_apply [CharZero k]
+theorem LieIdeal.extensionPBWCoalgEquiv_apply
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I)
@@ -624,7 +625,7 @@ theorem LieIdeal.extensionPBWCoalgEquiv_apply [CharZero k]
 
 /-- The quotient map sends the ideal enveloping algebra to scalars through
 the counit. -/
-theorem LieIdeal.pbwMap_quotient_comp_ideal [CharZero k]
+theorem LieIdeal.pbwMap_quotient_comp_ideal
     (I : LieIdeal k L) :
     (UniversalEnvelopingAlgebra.pbwMap
         (LieIdeal.quotientMkLieHom I)).comp
@@ -654,7 +655,7 @@ theorem LieIdeal.pbwMap_quotient_comp_ideal [CharZero k]
 
 /-- Applying the quotient map to the PBW tensor decomposition multiplies
 the quotient factor by the counit of the ideal factor. -/
-theorem LieIdeal.pbwMap_extensionPBW_tmul [CharZero k]
+theorem LieIdeal.pbwMap_extensionPBW_tmul
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I)
@@ -677,7 +678,7 @@ theorem LieIdeal.pbwMap_extensionPBW_tmul [CharZero k]
   exact congrArg (fun z => q * z) hideal
 
 @[simp]
-theorem LieIdeal.pbwMap_ueaLinearSection [CharZero k]
+theorem LieIdeal.pbwMap_ueaLinearSection
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I)
@@ -689,7 +690,7 @@ theorem LieIdeal.pbwMap_ueaLinearSection [CharZero k]
     (LieIdeal.pbwMap_comp_ueaLinearSection I bQ bI) q
 
 @[simp]
-theorem LieIdeal.pbwMap_quotient_ideal [CharZero k]
+theorem LieIdeal.pbwMap_quotient_ideal
     (I : LieIdeal k L) (a : UniversalEnvelopingAlgebra k I) :
     UniversalEnvelopingAlgebra.pbwMap
         (LieIdeal.quotientMkLieHom I)
@@ -700,7 +701,7 @@ theorem LieIdeal.pbwMap_quotient_ideal [CharZero k]
   exact DFunLike.congr_fun (LieIdeal.pbwMap_quotient_comp_ideal I) a
 
 @[simp]
-theorem LieIdeal.extensionPBWCoalgEquiv_symm_mul [CharZero k]
+theorem LieIdeal.extensionPBWCoalgEquiv_symm_mul
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I)
@@ -737,7 +738,7 @@ theorem LieIdeal.middleCounitContraction_tmul (I : LieIdeal k L)
 
 /-- The coaction obtained from the quotient map, transported back through
 the PBW tensor decomposition and contracted in the middle quotient factor. -/
-noncomputable def LieIdeal.extensionCoactionRetraction [CharZero k]
+noncomputable def LieIdeal.extensionCoactionRetraction
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I) :
@@ -753,7 +754,7 @@ noncomputable def LieIdeal.extensionCoactionRetraction [CharZero k]
 
 /-- Contracting the transported quotient coaction is the inverse PBW
 decomposition. -/
-theorem LieIdeal.extensionCoactionRetraction_apply_extension [CharZero k]
+theorem LieIdeal.extensionCoactionRetraction_apply_extension
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I)
@@ -848,7 +849,7 @@ noncomputable def LieIdeal.leftQuotientCoaction (I : LieIdeal k L) :
 
 /-- The contracted coaction retraction is exactly the inverse PBW
 equivalence. -/
-theorem LieIdeal.extensionCoactionRetraction_eq_symm [CharZero k]
+theorem LieIdeal.extensionCoactionRetraction_eq_symm
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I) :
@@ -869,7 +870,7 @@ theorem LieIdeal.extensionCoactionRetraction_eq_symm [CharZero k]
 /-- If the quotient coaction of a subspace has first tensor factor in
 `P`, then its inverse-PBW image lies in `P ⊗ U(I)`. -/
 theorem LieIdeal.extensionPBWEquiv_symm_mem_of_coaction_mem
-    [CharZero k] {α β : Type*} [LinearOrder α] [LinearOrder β]
+ {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I)
     (P : Submodule k (UniversalEnvelopingAlgebra k (L ⧸ I)))
@@ -953,7 +954,7 @@ theorem LieIdeal.extensionPBWEquiv_symm_mem_of_coaction_mem
 
 /-- The quotient coaction of a product `a σ(c)` has first tensor factor in
 the product of the quotient image of the coefficient coalgebra with `C`. -/
-theorem LieIdeal.leftQuotientCoaction_mul_section_mem [CharZero k]
+theorem LieIdeal.leftQuotientCoaction_mul_section_mem
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I)
@@ -1157,7 +1158,7 @@ theorem sfinrank_tensorProductSubspace
 finite coefficient coalgebra introduces only finitely many ideal
 coefficients, while the quotient coordinate stays in the expected product
 space. -/
-theorem LieIdeal.exists_finite_extension_defect [CharZero k]
+theorem LieIdeal.exists_finite_extension_defect
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I)
@@ -1216,7 +1217,7 @@ theorem LieIdeal.exists_finite_extension_defect [CharZero k]
 
 /-- Right multiplication by an ideal coefficient acts only on the ideal
 factor of the PBW tensor decomposition. -/
-theorem LieIdeal.extensionPBWEquiv_symm_mul_ideal_mem [CharZero k]
+theorem LieIdeal.extensionPBWEquiv_symm_mul_ideal_mem
     {α β : Type*} [LinearOrder α] [LinearOrder β]
     (I : LieIdeal k L) (bQ : Basis β k (L ⧸ I))
     (bI : Basis α k I)
@@ -1935,27 +1936,25 @@ section AssociativeLieInstance
 
 attribute [local instance 100] LieRing.ofAssociativeRing
 
-/-- Amenability of a Lie algebra, in the equivalent generator-test
-formulation of Proposition `generator-test` in the article. -/
-def IsAmenableLieAlgebra : Prop :=
-  HasActionFolnerSubspaces (k := k) (H := U) (M := U)
-
 theorem algebraModuleExpansion_eq_actionExpansion
     (F E : Submodule k U) :
     algebraModuleExpansion F E = actionExpansion F E := by
   rw [algebraModuleExpansion, actionExpansion, actionSubspace_eq_map₂]
 
-/-- The generator-test formulation used here is literally Elek's
-associative-module condition on `U(L)`. -/
-theorem isAmenableLieAlgebra_iff_algebraicallyAmenable :
+/-- The manuscript definition of Lie amenability is equivalent, by the
+generator test, to Elek's associative-module condition on `U(L)`. -/
+theorem isAmenableLieAlgebra_iff_algebraicallyAmenableModule :
     IsAmenableLieAlgebra (k := k) (L := L) ↔
       IsAlgebraicallyAmenableModule (k := k) (A := U) (Q := U) := by
   constructor
   · intro h F hF ε hε
-    obtain ⟨E, hE, hEfd, hratio⟩ := h F hF ε hε
+    have hregular := isAmenableLieAlgebra_iff_regularActionFolner.mp h
+    obtain ⟨E, hE, hEfd, hratio⟩ := hregular F hF ε hε
     exact ⟨E, hE, hEfd, by
       rwa [algebraModuleExpansion_eq_actionExpansion]⟩
-  · intro h F hF ε hε
+  · intro h
+    apply isAmenableLieAlgebra_iff_regularActionFolner.mpr
+    intro F hF ε hε
     obtain ⟨E, hE, hEfd, hratio⟩ := h F hF ε hε
     exact ⟨E, hE, hEfd, by
       rwa [algebraModuleExpansion_eq_actionExpansion] at hratio⟩
@@ -2110,7 +2109,7 @@ theorem isAmenableLieAlgebra_of_map_basis
   change Basis ι UL UQ at b
   have hQalg : IsAlgebraicallyAmenableModule
       (k := k) (A := UQ) (Q := UQ) :=
-    isAmenableLieAlgebra_iff_algebraicallyAmenable.mp hQ
+    isAmenableLieAlgebra_iff_algebraicallyAmenableModule.mp hQ
   have hrestricted : IsAlgebraicallyAmenableModule
       (k := k) (A := UL) (Q := UQ) := by
     intro F hF ε hε
@@ -2137,16 +2136,16 @@ theorem isAmenableLieAlgebra_of_map_basis
     exact ⟨E, hE, hEfd, by rwa [hexpansion]⟩
   have hULalg :=
     IsAlgebraicallyAmenableModule.coefficient_of_basis b hrestricted
-  exact isAmenableLieAlgebra_iff_algebraicallyAmenable.mpr hULalg
+  exact isAmenableLieAlgebra_iff_algebraicallyAmenableModule.mpr hULalg
 
 /-- Subalgebra descent for an injective Lie map, with relative PBW built
 from injectivity of the canonical maps into the two enveloping algebras. -/
 theorem isAmenableLieAlgebra_of_injective_of_iota_injective
-    [CharZero k] {Q : Type w} [LieRing Q] [LieAlgebra k Q]
+ {Q : Type w} [LieRing Q] [LieAlgebra k Q]
     (f : L →ₗ⁅k⁆ Q) (hf : Function.Injective f)
-    (hιL : Function.Injective
+    (_hιL : Function.Injective
       (UniversalEnvelopingAlgebra.ι (L := L) k))
-    (hιQ : Function.Injective
+    (_hιQ : Function.Injective
       (UniversalEnvelopingAlgebra.ι (L := Q) k))
     (hQ : IsAmenableLieAlgebra (k := k) (L := Q)) :
     IsAmenableLieAlgebra (k := k) (L := L) := by
@@ -2157,12 +2156,11 @@ theorem isAmenableLieAlgebra_of_injective_of_iota_injective
       (UniversalEnvelopingAlgebra.RelativeComplementIndex b f hf) :=
     UniversalEnvelopingAlgebra.relativeComplementLinearOrder b f hf
   exact isAmenableLieAlgebra_of_map_basis f
-    (UniversalEnvelopingAlgebra.relativePBWBasisOfIotaInjective
-      b f hf hιL hιQ) hQ
+    (UniversalEnvelopingAlgebra.relativePBWBasis b f hf) hQ
 
 /-- Subalgebra closure in Theorem D. -/
 theorem isAmenableLieAlgebra_of_injective_pbw
-    [CharZero k] {Q : Type w} [LieRing Q] [LieAlgebra k Q]
+ {Q : Type w} [LieRing Q] [LieAlgebra k Q]
     (f : L →ₗ⁅k⁆ Q) (hf : Function.Injective f)
     (hQ : IsAmenableLieAlgebra (k := k) (L := Q)) :
     IsAmenableLieAlgebra (k := k) (L := L) := by
@@ -2178,7 +2176,7 @@ theorem isAmenableLieAlgebra_of_injective_pbw
 /-- PBW makes the enveloping-algebra map induced by an injective Lie map
 injective. -/
 theorem ueaMap_injective
-    [CharZero k] {Q : Type w} [LieRing Q] [LieAlgebra k Q]
+ {Q : Type w} [LieRing Q] [LieAlgebra k Q]
     (f : L →ₗ⁅k⁆ Q) (hf : Function.Injective f) :
     Function.Injective (ueaMap f) := by
   let UL := UniversalEnvelopingAlgebra k L
@@ -2209,14 +2207,14 @@ theorem isAmenableLieAlgebra_iff_isAmenableHopfAlgebra :
     IsAmenableLieAlgebra (k := k) (L := L) ↔
       IsAmenableHopfAlgebra
         (k := k) (H := UniversalEnvelopingAlgebra k L) := by
-  simpa [IsAmenableLieAlgebra, IsAlgebraicallyAmenableHopfAlgebra] using
+  exact isAmenableLieAlgebra_iff_regularActionFolner.trans
     (isAmenableHopfAlgebra_iff_algebraicallyAmenable
       (k := k) (H := UniversalEnvelopingAlgebra k L)).symm
 
 /-- Subalgebra closure in Theorem D, obtained from Hopf-subalgebra
 permanence through the injective map of universal enveloping algebras. -/
 theorem isAmenableLieAlgebra_of_injective
-    [CharZero k] {Q : Type w} [LieRing Q] [LieAlgebra k Q]
+ {Q : Type w} [LieRing Q] [LieAlgebra k Q]
     (f : L →ₗ⁅k⁆ Q) (hf : Function.Injective f)
     (hQ : IsAmenableLieAlgebra (k := k) (L := Q)) :
     IsAmenableLieAlgebra (k := k) (L := L) := by
@@ -2235,7 +2233,7 @@ theorem isAmenableLieAlgebra_of_injective
 coefficient spaces contained in its range.  This is the local step used for
 directed unions. -/
 theorem exists_folner_of_le_ueaMap_range
-    [CharZero k] {Q : Type w} [LieRing Q] [LieAlgebra k Q]
+ {Q : Type w} [LieRing Q] [LieAlgebra k Q]
     (f : L →ₗ⁅k⁆ Q) (hf : Function.Injective f)
     (hL : IsAmenableLieAlgebra (k := k) (L := L))
     (P : Submodule k (UniversalEnvelopingAlgebra k Q))
@@ -2244,7 +2242,8 @@ theorem exists_folner_of_le_ueaMap_range
     ∃ E : Submodule k (UniversalEnvelopingAlgebra k Q),
       E ≠ ⊥ ∧ FiniteDimensional k E ∧
         (sfinrank k (actionExpansion P E) : ℚ) ≤
-          (1 + ε) * sfinrank k E := by
+      (1 + ε) * sfinrank k E := by
+  have hL := isAmenableLieAlgebra_iff_regularActionFolner.mp hL
   let UL := UniversalEnvelopingAlgebra k L
   let UQ := UniversalEnvelopingAlgebra k Q
   let φ : UL →ₗ[k] UQ := (ueaMap f).toLinearMap
@@ -2325,12 +2324,13 @@ theorem exists_folner_of_le_ueaMap_range
 
 /-- Directed-union closure in Theorem D. -/
 theorem isAmenableLieAlgebra_directedUnion
-    [CharZero k] {ι : Type w} [Nonempty ι]
+ {ι : Type w} [Nonempty ι]
     (S : ι → LieSubalgebra k L) (hdir : Directed (· ≤ ·) S)
     (hsup : iSup S = ⊤)
     (hS : ∀ i, IsAmenableLieAlgebra (k := k) (L := S i)) :
     IsAmenableLieAlgebra (k := k) (L := L) := by
   classical
+  apply isAmenableLieAlgebra_iff_regularActionFolner.mpr
   intro P hPfd ε hε
   let β := Module.Basis.ofVectorSpaceIndex k L
   let b : Basis β k L := Module.Basis.ofVectorSpace k L
@@ -2461,7 +2461,8 @@ theorem IsAmenableLieAlgebra.of_surjective
     exact map_mul φ a b
   have hULcoal : IsAmenableHopfModuleCoalgebra
       (k := k) (H := UL) (M := UL) :=
-    HasActionFolnerSubspaces.isAmenableHopfModuleCoalgebra hL
+    HasActionFolnerSubspaces.isAmenableHopfModuleCoalgebra
+      (isAmenableLieAlgebra_iff_regularActionFolner.mp hL)
   have hUQcoal : IsAmenableHopfModuleCoalgebra
       (k := k) (H := UL) (M := UQ) :=
     IsAmenableHopfModuleCoalgebra.of_surjective_coalgHom q hq
@@ -2472,6 +2473,7 @@ theorem IsAmenableLieAlgebra.of_surjective
   have hrestricted : HasActionFolnerSubspaces
       (k := k) (H := UL) (M := UQ) :=
     hUQcoal.hasActionFolnerSubspaces
+  apply isAmenableLieAlgebra_iff_regularActionFolner.mpr
   intro P hP ε hε
   let : FiniteDimensional k P := hP
   obtain ⟨s, hs⟩ := LinearMap.exists_rightInverse_of_surjective
@@ -2519,7 +2521,7 @@ theorem isAmenableLieAlgebra_quotient
 /-- The easy implication in the extension clause: amenability passes from
 the middle algebra to its ideal and quotient. -/
 theorem IsAmenableLieAlgebra.extension_components
-    [CharZero k] (I : LieIdeal k L)
+ (I : LieIdeal k L)
     (hL : IsAmenableLieAlgebra (k := k) (L := L)) :
     IsAmenableLieAlgebra (k := k) (L := I) ∧
       IsAmenableLieAlgebra (k := k) (L := L ⧸ I) := by
@@ -2531,12 +2533,15 @@ theorem IsAmenableLieAlgebra.extension_components
       (LieIdeal.quotientMkLieHom_surjective I)
 
 /-- Extension closure in Theorem D. -/
-theorem isAmenableLieAlgebra_extension_direct [CharZero k]
+theorem isAmenableLieAlgebra_extension_direct
     (I : LieIdeal k L)
     (hI : IsAmenableLieAlgebra (k := k) (L := I))
     (hQ : IsAmenableLieAlgebra (k := k) (L := L ⧸ I)) :
     IsAmenableLieAlgebra (k := k) (L := L) := by
   classical
+  have hI := isAmenableLieAlgebra_iff_regularActionFolner.mp hI
+  have hQ := isAmenableLieAlgebra_iff_regularActionFolner.mp hQ
+  apply isAmenableLieAlgebra_iff_regularActionFolner.mpr
   intro F hF ε hε
   let δ : ℚ := min (ε / 3) 1
   have hδ : 0 < δ := lt_min (by linarith) zero_lt_one
@@ -2720,7 +2725,7 @@ theorem isAmenableLieAlgebra_extension_direct [CharZero k]
     _ = (1 + ε) * sfinrank k E := by rw [hdimE]; norm_num
 
 /-- The extension clause of Theorem D in iff form. -/
-theorem isAmenableLieAlgebra_extension_direct_iff [CharZero k]
+theorem isAmenableLieAlgebra_extension_direct_iff
     (I : LieIdeal k L) :
     IsAmenableLieAlgebra (k := k) (L := L) ↔
       IsAmenableLieAlgebra (k := k) (L := I) ∧
@@ -2780,11 +2785,10 @@ theorem algebraBall_ne_bot (P : Submodule k U) (n : ℕ) :
   exact hone hOne
 
 set_option linter.unusedVariables false in
-/-- Local subexponential growth in exponential-bound form: for every
-finite-dimensional coefficient space and every exponential rate greater
-than one, the corresponding algebra balls are bounded by that rate to the
-radius. -/
-def HasLocallySubexponentialGrowth : Prop :=
+/-- The legacy unit-coefficient bound on UEA balls.  This auxiliary
+condition is retained only for the ratio lemma below; it is deliberately not
+called subexponential growth. -/
+def HasUnitCoefficientUEAGrowth : Prop :=
   ∀ (P : Submodule k U), FiniteDimensional k P →
     ∀ ε : ℚ, 0 < ε →
       ∃ C : ℚ, ∀ n : ℕ,
@@ -2826,9 +2830,10 @@ theorem exists_succ_le_mul_of_exponential_bound
   exact (not_lt_of_ge (hgrowth n)) han
 
 /-- The locally-subexponential-growth clause of Theorem D. -/
-theorem HasLocallySubexponentialGrowth.isAmenableLieAlgebra
-    (hL : HasLocallySubexponentialGrowth (k := k) (L := L)) :
+theorem HasUnitCoefficientUEAGrowth.isAmenableLieAlgebra
+    (hL : HasUnitCoefficientUEAGrowth (k := k) (L := L)) :
     IsAmenableLieAlgebra (k := k) (L := L) := by
+  apply isAmenableLieAlgebra_iff_regularActionFolner.mpr
   intro P hP ε hε
   let : FiniteDimensional k P := hP
   obtain ⟨_, hbound⟩ := hL P inferInstance (ε / 2) (by linarith)
@@ -2854,8 +2859,8 @@ theorem HasLocallySubexponentialGrowth.isAmenableLieAlgebra
 
 /-- Public statement of the locally-subexponential-growth clause of
 Theorem D. -/
-theorem isAmenableLieAlgebra_of_locallySubexponentialGrowth
-    (hL : HasLocallySubexponentialGrowth (k := k) (L := L)) :
+theorem isAmenableLieAlgebra_of_unitCoefficientUEAGrowth
+    (hL : HasUnitCoefficientUEAGrowth (k := k) (L := L)) :
     IsAmenableLieAlgebra (k := k) (L := L) :=
   hL.isAmenableLieAlgebra
 

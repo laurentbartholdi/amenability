@@ -27,6 +27,15 @@ chain:
   condition is named `HasGroupFolnerSubspaces` in parallel with
   `HasLieFolnerSubspaces`.
 
+The augmentation-associated-graded endpoint is unconditional.
+`AssociatedGradedHopf.lean` and `AssociatedGradedHopfModule.lean` install the
+actual Hopf and Hopf-module-coalgebra structures. `FilteredInitial.lean`
+constructs homogeneous lifts and proves the finite-dimensional telescoping
+formula for initial forms. `AugmentationAssociatedGraded.lean` applies this
+to the separated augmentation quotient and proves compatibility with action
+expansion. Consequently `TheoremJ.lean` no longer takes an
+`AugmentationAssociatedGradedData` argument.
+
 The standard coalgebra, cocommutativity, bialgebra, and Hopf instances for a
 universal enveloping algebra are isolated in
 `UniversalEnvelopingCoalgebra.lean`, under `namespace Coalgebra`, so that the
@@ -1107,3 +1116,43 @@ For each file:
 
 The project owner is actively compiling locally, so small compile-clean
 increments are preferable to speculative large rewrites.
+
+---
+
+## 11. Post-audit Lie/PBW and augmentation work
+
+The public `IsAmenableLieAlgebra` now states the manuscript condition on
+finite-dimensional subspaces of the Lie algebra and finite subcoalgebras of
+its UEA.  `Amenability/LieGeneratorTest.lean` proves its equivalence with
+`IsAlgebraicallyAmenableLieAlgebra`, the regular-action Følner predicate.
+
+The ordered PBW basis is now characteristic-free.  Its independence proof
+uses `pbwNormalFormRepresentation` and the left inverse
+`pbwNormalFormMap`, avoiding the old factorial-valued convolution diagonal.
+Consequently the public PBW basis, relative PBW basis, Theorem G permanence
+maps, and the explicit Theorem I construction elaborate over an arbitrary
+field.
+
+`Amenability/LieGrowth.lean` contains the genuine constant-bearing
+`IsSubexponentialSequence`, `HasSubexponentialLieGrowth`, and
+`HasLocallySubexponentialGrowth`; the former unit-coefficient UEA condition
+has been retained only under the truthful auxiliary name
+`HasUnitCoefficientUEAGrowth`.
+
+The Smith implication used by Theorem G is now formalized rather than
+assumed.  `AscendingFiltrationBasis.lean` splits successive finite Lie-ball
+layers and produces a basis indexed by first filtration degree.
+`WeightedPBW.lean` proves that PBW straightening respects the resulting
+positive weights, and `WeightedPBWGrowth.lean` proves the weighted-word
+generating-function estimate.  `LieGrowth.lean` combines these results,
+including fixed-dilation stability of subexponential sequences, to prove
+`isAmenableLieAlgebra_of_locallySubexponentialGrowth`.  Theorem H then proves
+both hierarchy inclusions `EL ⊆ SL` and `SL ⊆ AL` before separating the first
+two classes.
+
+For Theorem J, new concrete filtration lemmas live in
+`Amenability/AugmentationFiltration.lean`.  Multiplication, action, the
+degree-one coproduct estimate, tensor-filtration multiplication, and the
+full augmentation-filtration coproduct estimate are proved there.  Continue
+constructing the actual graded operations rather than adding fields to
+`AugmentationAssociatedGradedData`.

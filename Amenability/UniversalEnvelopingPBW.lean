@@ -2482,6 +2482,85 @@ theorem iota_injective_of_basis
     Function.Injective (UniversalEnvelopingAlgebra.ι (L := L) k) :=
   iota_injective_of_pbwLeftAction_isLie b (pbwLeftAction_isLie b)
 
+/-- The canonical Lie map into its universal enveloping algebra is
+injective over every field. -/
+theorem iota_injective :
+    Function.Injective (UniversalEnvelopingAlgebra.ι (L := L) k) := by
+  let ι := Module.Basis.ofVectorSpaceIndex k L
+  let b : Basis ι k L := Module.Basis.ofVectorSpace k L
+  let _ : LinearOrder ι := WellOrderingRel.isWellOrder.linearOrder
+  exact iota_injective_of_basis b
+
+/-- The normal-form representation of the universal enveloping algebra on
+formal ordered PBW words. -/
+noncomputable def pbwNormalFormRepresentation
+    {ι : Type w} [LinearOrder ι] (b : Basis ι k L) :
+    UniversalEnvelopingAlgebra k L →ₐ[k]
+      Module.End k (PBWWord ι →₀ k) :=
+  let ρ : LieHom k L (Module.End k (PBWWord ι →₀ k)) := {
+    toLinearMap := pbwLeftAction b
+    map_lie' := fun {x y} => (pbwLeftAction_isLie b x y).symm }
+  UniversalEnvelopingAlgebra.lift k ρ
+
+/-- Evaluate the normal-form representation on the empty word. -/
+noncomputable def pbwNormalFormMap
+    {ι : Type w} [LinearOrder ι] (b : Basis ι k L) :
+    UniversalEnvelopingAlgebra k L →ₗ[k] (PBWWord ι →₀ k) :=
+  (LinearMap.applyₗ (R := k)
+    (Finsupp.single (emptyPBWWord ι) (1 : k))).comp
+      (pbwNormalFormRepresentation b).toLinearMap
+
+theorem pbwNormalFormMap_pbwMonomial
+    {ι : Type w} [LinearOrder ι] (b : Basis ι k L) (word : List ι) :
+    pbwNormalFormMap b (pbwMonomial b word) = pbwNormalForm b word := by
+  induction word with
+  | nil =>
+      simp [pbwNormalFormMap, pbwNormalFormRepresentation, pbwMonomial_nil,
+        pbwNormalForm, emptyPBWWord]
+  | cons i word ih =>
+      rw [pbwMonomial_cons]
+      change (pbwNormalFormRepresentation b
+        (UniversalEnvelopingAlgebra.ι k (b i) * pbwMonomial b word))
+          (Finsupp.single (emptyPBWWord ι) 1) = _
+      rw [map_mul]
+      rw [show pbwNormalFormRepresentation b
+          (UniversalEnvelopingAlgebra.ι k (b i)) = pbwLeftAction b (b i) by
+        simp only [pbwNormalFormRepresentation,
+          UniversalEnvelopingAlgebra.lift_ι_apply]
+        rfl]
+      change pbwLeftAction b (b i)
+          (pbwNormalFormRepresentation b (pbwMonomial b word)
+            (Finsupp.single (emptyPBWWord ι) 1)) = _
+      rw [show pbwNormalFormRepresentation b (pbwMonomial b word)
+          (Finsupp.single (emptyPBWWord ι) 1) = pbwNormalForm b word by
+        exact ih]
+      rw [pbwLeftAction_apply_basis]
+      exact pbwLeftActionBasis_pbwNormalForm b i word
+
+theorem pbwNormalFormMap_orderedMonomial
+    {ι : Type w} [LinearOrder ι] (b : Basis ι k L) (word : PBWWord ι) :
+    pbwNormalFormMap b (orderedMonomial b word) = Finsupp.single word 1 := by
+  rw [orderedMonomial, pbwNormalFormMap_pbwMonomial,
+    pbwNormalForm_of_pairwise b word.2]
+
+/-- Ordered PBW monomials are linearly independent over every field. -/
+theorem orderedMonomial_linearIndependent_allChar
+    {ι : Type w} [LinearOrder ι] (b : Basis ι k L) :
+    LinearIndependent k (orderedMonomial b) := by
+  rw [linearIndependent_iff]
+  intro z hz
+  have hleft : (pbwNormalFormMap b).comp
+      (orderedMonomialLinearCombination b) = LinearMap.id := by
+    apply Finsupp.basisSingleOne.ext
+    intro word
+    simp [orderedMonomialLinearCombination,
+      pbwNormalFormMap_orderedMonomial]
+  have h := LinearMap.congr_fun hleft z
+  change pbwNormalFormMap b (orderedMonomialLinearCombination b z) = z at h
+  have hz' : orderedMonomialLinearCombination b z = 0 := hz
+  rw [hz', map_zero] at h
+  exact h.symm
+
 /-! ## Coalgebraic coefficient extraction -/
 
 /-- All order-preserving ways of splitting a word into two subwords.  An
@@ -2964,24 +3043,22 @@ noncomputable def relativePBWBasisOfIotaInjective
   · exact orderedMonomial_linearIndependent_of_iota_injective
       (extendMappedBasisLex b f hf) hιQ
 
-/-- The ordered PBW monomials are linearly independent in characteristic
-zero. -/
+/-- The ordered PBW monomials are linearly independent over every field. -/
 theorem orderedMonomial_linearIndependent
-    [CharZero k] {ι : Type w} [LinearOrder ι] (b : Basis ι k L) :
+    {ι : Type w} [LinearOrder ι] (b : Basis ι k L) :
     LinearIndependent k (orderedMonomial b) :=
-  orderedMonomial_linearIndependent_of_iota_injective b
-    (iota_injective_of_basis b)
+  orderedMonomial_linearIndependent_allChar b
 
 /-- The absolute ordered PBW basis. -/
 noncomputable def orderedMonomialBasis
-    [CharZero k] {ι : Type w} [LinearOrder ι] (b : Basis ι k L) :
+    {ι : Type w} [LinearOrder ι] (b : Basis ι k L) :
     Basis (PBWWord ι) k (UniversalEnvelopingAlgebra k L) :=
   orderedMonomialBasisOfLinearIndependent b
     (orderedMonomial_linearIndependent b)
 
 @[simp]
 theorem orderedMonomialBasis_apply
-    [CharZero k] {ι : Type w} [LinearOrder ι] (b : Basis ι k L)
+    {ι : Type w} [LinearOrder ι] (b : Basis ι k L)
     (word : PBWWord ι) :
     orderedMonomialBasis b word = orderedMonomial b word :=
   orderedMonomialBasisOfLinearIndependent_apply _ _ _
@@ -2989,7 +3066,7 @@ theorem orderedMonomialBasis_apply
 /-- Relative PBW: after extending a basis along an injective Lie map, the
 complement monomials form a basis over the smaller enveloping algebra. -/
 noncomputable def relativePBWBasis
-    [CharZero k] {ι : Type*} [LinearOrder ι]
+    {ι : Type*} [LinearOrder ι]
     {Q : Type w} [LieRing Q] [LieAlgebra k Q]
     (b : Basis ι k L) (f : LieHom k L Q) (hf : Function.Injective f) :
     let _ : LinearOrder (RelativeComplementIndex b f hf) :=
@@ -2997,9 +3074,10 @@ noncomputable def relativePBWBasis
     RelativePBWBasis f (PBWWord (RelativeComplementIndex b f hf)) := by
   let _ : LinearOrder (RelativeComplementIndex b f hf) :=
     relativeComplementLinearOrder b f hf
-  exact relativePBWBasisOfIotaInjective b f hf
-    (iota_injective_of_basis b)
-    (iota_injective_of_basis (extendMappedBasisLex b f hf))
+  exact relativePBWBasisOfLinearIndependent b f hf
+    (orderedMonomial_linearIndependent_allChar b)
+    (orderedMonomial_linearIndependent_allChar
+      (extendMappedBasisLex b f hf))
 
 /-! ## Finite PBW filtrations -/
 
@@ -3196,7 +3274,7 @@ theorem finiteDimensional_monomialFiltration
   exact Module.Finite.span_of_finite k (Set.toFinite _)
 
 /-- The dimension of the degree-`n` PBW filtration. -/
-theorem finrank_monomialFiltration [CharZero k]
+theorem finrank_monomialFiltration
     {ι : Type w} [LinearOrder ι] [Fintype ι]
     (b : Basis ι k L) (n : ℕ) :
     Module.finrank k (monomialFiltration b n) =

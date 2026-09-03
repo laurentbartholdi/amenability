@@ -41,7 +41,7 @@ structure ExponentialLocallyFiniteByOneExample where
   amenable : IsAmenableLieAlgebra (k := k) (L := L.Carrier)
 
 /-- The scalar multiples of `t` split the one-dimensional quotient. -/
-noncomputable def ProfileLieExample.quotientSplitting [CharZero k] :
+noncomputable def ProfileLieExample.quotientSplitting :
     k →ₗ[k] ProfileLieExample.ExampleLie k :=
   LinearMap.smulRight LinearMap.id (ProfileLieExample.tLie k)
 
@@ -50,7 +50,7 @@ set_option synthInstance.maxHeartbeats 100000 in
 /-- The explicit profile-matrix example of Theorem I.  The larger synthesis
 budget is needed for the nested subtype instances in the explicit matrix Lie
 algebra and its quotient. -/
-noncomputable def exponentialLocallyFiniteByOneExample [CharZero k] :
+noncomputable def exponentialLocallyFiniteByOneExample :
     ExponentialLocallyFiniteByOneExample.{u, u} k where
   L := LieAlgebraObject.of k (ProfileLieExample.ExampleLie k)
   K := ProfileLieExample.exampleKernel k
@@ -96,13 +96,13 @@ noncomputable def exponentialLocallyFiniteByOneExample [CharZero k] :
 of exponential growth which is locally finite-dimensional by
 one-dimensional. -/
 theorem exists_amenableLieAlgebra_exponentialGrowth_locallyFiniteByOne
-    [CharZero k] :
+ :
     Nonempty (ExponentialLocallyFiniteByOneExample.{u, u} k) :=
   ⟨exponentialLocallyFiniteByOneExample k⟩
 
 /-- Manuscript-named alias for Theorem I. -/
 theorem exists_amenable_exponentialGrowth_locallyFiniteByOne
-    [CharZero k] :
+ :
     Nonempty (ExponentialLocallyFiniteByOneExample.{u, u} k) :=
   exists_amenableLieAlgebra_exponentialGrowth_locallyFiniteByOne k
 

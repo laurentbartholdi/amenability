@@ -6,6 +6,7 @@ Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 
 import Amenability.TheoremD
 import Amenability.TheoremE
+import Amenability.LieGrowth
 
 /-! # Theorem G: permanence properties for amenable Lie algebras -/
 
@@ -18,7 +19,7 @@ noncomputable section
 universe u v
 
 variable {k : Type u} {L : Type v}
-variable [Field k] [LieRing L] [LieAlgebra k L] [CharZero k]
+variable [Field k] [LieRing L] [LieAlgebra k L]
 
 /-- The universal-enveloping sequence of a Lie ideal, packaged as the
 intrinsic cleft exact sequence required by Theorem E. -/
@@ -206,8 +207,9 @@ theorem isAmenableLieAlgebra_extension_iff (I : LieIdeal k L) :
   · rintro ⟨hI, hQ⟩
     exact isAmenableLieAlgebra_extension_of_components I hI hQ
 
-#check isAmenableLieAlgebra_of_locallySubexponentialGrowth
 #check isAmenableLieAlgebra_of_injective
+#check isAmenableLieAlgebra_of_locallySubexponentialGrowth
+#check isAmenableLieAlgebra_of_isLieAbelian
 #check isAmenableLieAlgebra_quotient
 #check isAmenableLieAlgebra_extension_iff
 #check isAmenableLieAlgebra_directedUnion

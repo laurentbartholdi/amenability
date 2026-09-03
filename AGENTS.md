@@ -27,7 +27,9 @@ them: many delicate API/coercion issues have already been resolved.
   Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
   -/
   ```
-- Do not use `sorry`.
+- Do not use `sorry`, except for the single designated theorem
+  `exists_psz_subexponential_not_elementary` implementing the external
+  positive-characteristic PSZ construction.
 - Compile modified files. Fix all errors before moving to dependent files.
 - Prefer small, dependency-ordered changes. Do not rewrite already-working
   proofs merely for style.

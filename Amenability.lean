@@ -51,10 +51,13 @@ amenable group algebra is algebraically amenable. -/
 #check HopfAmenability.hasActionFolnerSubspaces_of_quotient_permutationModule
 #check HopfAmenability.hasActionFolnerSubspaces_of_isAmenableGroup
 
-/- Theorem G: locally subexponential Lie algebras are amenable, and amenable
-Lie algebras are closed under subalgebras, quotients, extensions, and directed
-unions. -/
+/- Theorem G: every locally subexponential-growth Lie algebra (in particular,
+every Abelian Lie algebra) is amenable, and amenable Lie algebras are closed
+under subalgebras, quotients, extensions, and directed unions. -/
+#check HopfAmenability.isAmenableLieAlgebra_iff_algebraicallyAmenable
+#check HopfAmenability.isAmenableLieAlgebra_iff_isAmenableHopfAlgebra
 #check HopfAmenability.isAmenableLieAlgebra_of_locallySubexponentialGrowth
+#check HopfAmenability.isAmenableLieAlgebra_of_isLieAbelian
 #check HopfAmenability.isAmenableLieAlgebra_of_injective
 #check HopfAmenability.isAmenableLieAlgebra_quotient
 #check HopfAmenability.isAmenableLieAlgebra_extension_iff
@@ -62,6 +65,8 @@ unions. -/
 
 /- Theorem H: elementary and subexponentially amenable Lie algebras form
 distinct classes in every characteristic. -/
+#check HopfAmenability.IsElementaryLieObject.isSubexponentiallyAmenable
+#check HopfAmenability.IsSubexponentiallyAmenableLieObject.isAmenable
 #check HopfAmenability.elementaryLieAlgebras_ne_subexponentiallyAmenableLieAlgebras_general
 
 /- Theorem I: an explicit finitely generated amenable Lie algebra has
@@ -69,8 +74,8 @@ exponential growth and a locally finite-dimensional kernel with
 one-dimensional quotient. -/
 #check HopfAmenability.exists_amenable_exponentialGrowth_locallyFiniteByOne
 
-/- Theorem J: amenability passes to the augmentation-associated graded
-Hopf-module coalgebra. -/
+/- Theorem J: amenability passes unconditionally to the concrete
+augmentation-associated graded Hopf-module coalgebra. -/
 #check HopfAmenability.isAmenable_associatedGraded
 
 /- Supporting group permanence: group amenability agrees with amenability of

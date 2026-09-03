@@ -4,53 +4,83 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
 
-import Amenability.HopfAmenability
+import Amenability.AugmentationAssociatedGraded
 
 /-!
 # Theorem J: amenability of the associated graded module coalgebra
 
-This file exposes the final main theorem of the accompanying article.  The
-structure `AugmentationAssociatedGradedData` records the separated quotient,
-leading-symbol spaces, and their standard finite-dimensional properties.  It
-does not contain an amenability hypothesis or conclusion.
+This file exposes the final main theorem of the accompanying article using
+the concrete augmentation filtration, separated quotient, and associated
+graded structures constructed in the supporting files.
 -/
 
 namespace HopfAmenability
 
-universe u v w x y
+universe u v
 
 variable {k : Type u} {H M : Type v}
-variable {Msep : Type y}
-variable {grH : Type w} {grM : Type x}
 variable [Field k] [Ring H] [HopfAlgebra k H]
 variable [Coalgebra.IsCocomm k H]
 variable [AddCommGroup M] [Module k M] [Module H M] [IsScalarTower k H M]
 variable [Coalgebra k M] [IsHopfModuleCoalgebra k H M]
-variable [AddCommGroup Msep] [Module k Msep] [Module H Msep]
-variable [IsScalarTower k H Msep] [Coalgebra k Msep]
-variable [IsHopfModuleCoalgebra k H Msep]
-variable [Ring grH] [HopfAlgebra k grH] [Coalgebra.IsCocomm k grH]
-variable [AddCommGroup grM] [Module k grM] [Module grH grM]
-variable [IsScalarTower k grH grM] [Coalgebra k grM]
-variable [IsHopfModuleCoalgebra k grH grM]
 
-/-- **Theorem J.** Amenability passes from a Hopf-module coalgebra to its
-augmentation-associated graded Hopf-module coalgebra. -/
-theorem theoremJ_associatedGraded
-    (gr : AugmentationAssociatedGradedData (k := k) (H := H)
-      M Msep grH grM)
-    (hM : IsAmenableHopfModuleCoalgebra (k := k) (H := H) (M := M)) :
-    IsAmenableHopfModuleCoalgebra (k := k) (H := grH) (M := grM) :=
-  hM.associatedGraded gr
-
-/-- Public endpoint for Theorem J.  The realization data identifies `grH`
-and `grM` with the direct sums of the concrete augmentation quotients and
-records the induced filtered operations; it contains no amenability field. -/
+/-- **Theorem J.** Amenability passes to the concrete augmentation-associated
+graded Hopf-module coalgebra.  All quotient, lifting, and leading-symbol data
+are constructed canonically in the supporting files. -/
 theorem isAmenable_associatedGraded
-    (gr : AugmentationAssociatedGradedData (k := k) (H := H)
-      M Msep grH grM)
     (hM : IsAmenableHopfModuleCoalgebra (k := k) (H := H) (M := M)) :
-    IsAmenableHopfModuleCoalgebra (k := k) (H := grH) (M := grM) :=
-  theoremJ_associatedGraded gr hM
+    IsAmenableHopfModuleCoalgebra
+      (k := k) (H := AugmentationGradedHopf (k := k) (H := H))
+      (M := AugmentationGradedModule (k := k) (H := H) (M := M)) := by
+  let _ : AddCommGroup
+      (AugmentationGradedModule (k := k) (H := H) (M := M)) :=
+    inferInstanceAs (AddCommGroup (Π₀ n,
+      AugmentationGradedModulePiece (k := k) (H := H) (M := M) n))
+  have hsep := hM.augmentationSeparated
+  apply HasActionFolnerSubspaces.isAmenableHopfModuleCoalgebra
+  intro F hF ε hε
+  let _ : FiniteDimensional k F := hF
+  let Flift := liftHomogeneousSubspace (k := k)
+    (augmentationFiltration (k := k) (H := H)) F
+  let _ : FiniteDimensional k Flift :=
+    finiteDimensional_liftHomogeneousSubspace _ F
+  obtain ⟨E, hE, hEfd, hEratio⟩ :=
+    hsep.hasActionFolnerSubspaces Flift inferInstance ε hε
+  let _ : FiniteDimensional k E := hEfd
+  let Egr := separatedInitialSubspace (k := k) (H := H) (M := M) E
+  let _ : FiniteDimensional k Egr :=
+    finiteDimensional_separatedInitialSubspace E
+  have hsourcefd : FiniteDimensional k (actionExpansion Flift E) :=
+    finiteDimensional_actionExpansion Flift E
+  have hinitialfd : FiniteDimensional k
+      (separatedInitialSubspace (k := k) (H := H) (M := M)
+        (actionExpansion Flift E)) :=
+    finiteDimensional_separatedInitialSubspace _
+  have hdimExpansion :
+      sfinrank k (actionExpansion F Egr) ≤
+        sfinrank k (actionExpansion Flift E) := by
+    calc
+      sfinrank k (actionExpansion F Egr) ≤
+          sfinrank k (separatedInitialSubspace
+            (k := k) (H := H) (M := M) (actionExpansion Flift E)) :=
+        Submodule.finrank_mono
+          (actionExpansion_separatedInitialSubspace_le F E)
+      _ = sfinrank k (actionExpansion Flift E) :=
+        finrank_separatedInitialSubspace _
+  refine ⟨Egr, separatedInitialSubspace_ne_bot E hE, inferInstance, ?_⟩
+  calc
+    (sfinrank k (actionExpansion F Egr) : ℚ) ≤
+        sfinrank k (actionExpansion Flift E) := by exact_mod_cast hdimExpansion
+    _ ≤ (1 + ε) * sfinrank k E := hEratio
+    _ = (1 + ε) * sfinrank k Egr := by
+      rw [finrank_separatedInitialSubspace E]
+
+/-- Manuscript-letter alias for Theorem J. -/
+theorem theoremJ_associatedGraded
+    (hM : IsAmenableHopfModuleCoalgebra (k := k) (H := H) (M := M)) :
+    IsAmenableHopfModuleCoalgebra
+      (k := k) (H := AugmentationGradedHopf (k := k) (H := H))
+      (M := AugmentationGradedModule (k := k) (H := H) (M := M)) :=
+  isAmenable_associatedGraded hM
 
 end HopfAmenability

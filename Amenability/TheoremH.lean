@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Laurent Bartholdi, based on code by ChatGPT 5.6 Sol
 -/
 
-import Amenability.TheoremD
+import Amenability.TheoremG
 import Amenability.ElementaryLieAlgebra
 import Mathlib.Algebra.Lie.Ideal
 import Mathlib.Algebra.Lie.Semisimple.Defs
@@ -868,19 +868,6 @@ theorem exists_rational_pow_gt_linear (eps : ℚ) (heps : 0 < eps) :
   ring_nf at hquad hsqmono
   nlinarith [hquad]
 
-/-- The operational subexponential-growth condition used in the Følner
-argument: every positive tolerance occurs as a one-step growth ratio. -/
-def HasSubexponentialLieGrowth (L : Type*) [LieRing L] [LieAlgebra k L] : Prop :=
-  ∃ (F : Submodule k L) (B : ℕ → Submodule k L),
-    FiniteDimensional k F ∧
-      LieSubalgebra.lieSpan k L (F : Set L) = ⊤ ∧
-      B 0 = F ∧
-      (∀ n, B (n + 1) = lieExpansion F (B n)) ∧
-      (∀ n, FiniteDimensional k (B n)) ∧
-      ∀ eps : ℚ, 0 < eps → ∃ n : ℕ,
-        (sfinrank k (B (n + 1)) : ℚ) ≤
-          (1 + eps) * sfinrank k (B n)
-
 theorem wittGeneratorSubmodule_ne_bot :
     wittGeneratorSubmodule k ≠ ⊥ := by
   intro hbot
@@ -922,16 +909,46 @@ theorem wittLieBall_subexponential_ratio (eps : ℚ) (heps : 0 < eps) :
   norm_num [Nat.cast_add, Nat.cast_mul] at hupper ⊢
   exact (not_lt_of_ge (hlower n |>.trans hupper)) hn
 
-/-- Linear growth gives the Witt algebra subexponential growth in the exact
-ratio form used by the amenability proof. -/
+/-- The explicit Witt balls agree with the recursively defined manuscript
+Lie balls. -/
+theorem wittLieBall_eq_lieGrowthBall (n : ℕ) :
+    wittLieBall (k := k) n =
+      lieGrowthBall k (wittGeneratorSubmodule k) n := by
+  induction n with
+  | zero => rw [wittLieBall_zero, lieGrowthBall_zero]
+  | succ n ih => rw [wittLieBall_succ, lieGrowthBall_succ, ih]
+
+/-- Linear growth gives genuine subexponential growth of the Witt algebra. -/
 theorem wittAlgebra_hasSubexponentialLieGrowth [CharZero k] :
     HasSubexponentialLieGrowth k (WittAlgebra k) := by
-  refine ⟨wittGeneratorSubmodule k, wittLieBall (k := k),
+  refine ⟨wittGeneratorSubmodule k,
     finiteDimensional_wittGeneratorSubmodule k,
-    wittGeneratorSubmodule_lieSpan_eq_top k, rfl, ?_, ?_, ?_⟩
-  · exact wittLieBall_succ k
-  · exact finiteDimensional_wittLieBall k
-  · exact wittLieBall_subexponential_ratio k
+    wittGeneratorSubmodule_lieSpan_eq_top k, ?_⟩
+  intro q hq
+  let e : ℚ := q - 1
+  have he : 0 < e := sub_pos.mpr hq
+  let C : ℚ := 5 + 4 / e
+  have hC : 0 < C := by dsimp [C]; positivity
+  refine ⟨C, hC, ?_⟩
+  intro n
+  dsimp only
+  rw [← wittLieBall_eq_lieGrowthBall]
+  have hdim := finrank_wittLieBall_le k n
+  have hbern : 1 + (n : ℚ) * e ≤ q ^ n := by
+    have := one_add_mul_le_pow (show (-2 : ℚ) ≤ e by linarith) n
+    simpa [e, add_comm, mul_comm] using this
+  have hlin : (4 * n + 5 : ℚ) ≤ C * (1 + (n : ℚ) * e) := by
+    dsimp [C]
+    field_simp
+    have hne2 : 0 ≤ (n : ℚ) * e ^ 2 := mul_nonneg (by positivity) (sq_nonneg e)
+    nlinarith
+  calc
+    (sfinrank k (wittLieBall (k := k) n) : ℚ) ≤ (4 * n + 5 : ℕ) :=
+      by exact_mod_cast hdim
+    _ ≤ C * (1 + (n : ℚ) * e) := by
+      norm_num [Nat.cast_add, Nat.cast_mul] at hlin ⊢
+      exact hlin
+    _ ≤ C * q ^ n := mul_le_mul_of_nonneg_left hbern hC.le
 
 /-- The class `SL`: the closure of subexponential-growth Lie algebras under
 extensions and directed unions.  As for `EL`, subalgebra and quotient
@@ -950,6 +967,69 @@ inductive IsSubexponentiallyAmenableLieObject : LieAlgebraObject k → Prop
       (hS : ∀ i,
         IsSubexponentiallyAmenableLieObject (A.ofSubalgebra (S i))) :
       IsSubexponentiallyAmenableLieObject A
+
+/-- The manuscript inclusion `SL ⊆ AL`. -/
+theorem IsSubexponentiallyAmenableLieObject.isAmenable
+    {A : LieAlgebraObject k}
+    (hA : IsSubexponentiallyAmenableLieObject (k := k) A) :
+    IsAmenableLieAlgebra (k := k) (L := A.Carrier) := by
+  induction hA with
+  | subexponential A hgrowth =>
+      exact isAmenableLieAlgebra_of_hasSubexponentialLieGrowth k hgrowth
+  | extension A I _ _ hI hQ =>
+      exact isAmenableLieAlgebra_extension I hI hQ
+  | directedUnion A ι S hdir hsup _ hS =>
+      exact isAmenableLieAlgebra_directedUnion S hdir hsup hS
+
+/-- Finite-dimensional Lie algebras lie in `SL`. -/
+theorem isSubexponentiallyAmenableLieObject_of_finiteDimensional
+    (A : LieAlgebraObject k) [FiniteDimensional k A.Carrier] :
+    IsSubexponentiallyAmenableLieObject (k := k) A :=
+  IsSubexponentiallyAmenableLieObject.subexponential A
+    (hasSubexponentialLieGrowth_of_finiteDimensional k)
+
+/-- Abelian Lie algebras lie in `SL`, as directed unions of their
+finite-generated (hence finite-dimensional) Lie subalgebras. -/
+theorem isSubexponentiallyAmenableLieObject_of_isLieAbelian
+    (A : LieAlgebraObject.{u, u} k) (hA : IsLieAbelian A.Carrier) :
+    IsSubexponentiallyAmenableLieObject (k := k) A := by
+  classical
+  let S : Finset A.Carrier → LieSubalgebra k A.Carrier :=
+    fun s => LieSubalgebra.lieSpan k A.Carrier (s : Set A.Carrier)
+  apply IsSubexponentiallyAmenableLieObject.directedUnion A
+    (Finset A.Carrier) S
+  · intro s t
+    refine ⟨s ∪ t, ?_, ?_⟩
+    · exact LieSubalgebra.lieSpan_mono Finset.subset_union_left
+    · exact LieSubalgebra.lieSpan_mono Finset.subset_union_right
+  · apply top_unique
+    intro x _hx
+    exact (le_iSup S {x})
+      (LieSubalgebra.subset_lieSpan (by simp))
+  · intro s
+    let _ : FiniteDimensional k (A.ofSubalgebra (S s)).Carrier := by
+      change FiniteDimensional k (S s)
+      dsimp [S]
+      exact finiteDimensional_lieSpan_finset_of_isLieAbelian k hA s
+    exact isSubexponentiallyAmenableLieObject_of_finiteDimensional k
+      (A.ofSubalgebra (S s))
+
+/-- The manuscript inclusion `EL ⊆ SL`. -/
+theorem IsElementaryLieObject.isSubexponentiallyAmenable
+    {A : LieAlgebraObject.{u, u} k}
+    (hA : IsElementaryLieObject.{u, u, u} A) :
+    IsSubexponentiallyAmenableLieObject (k := k) A := by
+  induction hA with
+  | finiteDimensional A hfd =>
+      let _ : FiniteDimensional k A.Carrier := hfd
+      exact isSubexponentiallyAmenableLieObject_of_finiteDimensional k A
+  | abelian A hAb =>
+      exact isSubexponentiallyAmenableLieObject_of_isLieAbelian k A hAb
+  | extension A I _ _ hI hQ =>
+      exact IsSubexponentiallyAmenableLieObject.extension A I hI hQ
+  | directedUnion A ι S hdir hsup _ hS =>
+      exact IsSubexponentiallyAmenableLieObject.directedUnion
+        A ι S hdir hsup hS
 
 /-- Unbundled membership in `SL`. -/
 def IsSubexponentiallyAmenableLieAlgebra (L : Type u)
@@ -991,6 +1071,7 @@ from reference [3].  We deliberately isolate that external input here rather
 than introducing a partial formalization of self-similar Lie algebras.
 -/
 
+set_option warningAsError false in
 /-- Reference [3], packaged in precisely the form needed for Theorem H: over
 a field of prime positive characteristic there is a subexponential-growth
 Lie algebra outside the elementary hierarchy.

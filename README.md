@@ -134,18 +134,26 @@ The files `Amenability/TheoremA.lean` through
   `isAmenableLieAlgebra_of_injective`, `isAmenableLieAlgebra_quotient`,
   `isAmenableLieAlgebra_extension_iff`, and
   `isAmenableLieAlgebra_directedUnion` are the Lie-algebra permanence
-  statements (Theorem G).
+  statements (Theorem G).  The subexponential clause is proved internally:
+  `AscendingFiltrationBasis.lean` constructs a basis adapted to Lie-growth
+  balls, while `WeightedPBW.lean` and `WeightedPBWGrowth.lean` formalize
+  weighted PBW straightening and Smith's generating-function estimate.
 - `elementaryLieAlgebras_ne_subexponentiallyAmenableLieAlgebras_general`
   separates the elementary and subexponentially amenable classes (Theorem
-  H). Its positive-characteristic self-similar example is the single
+  H).  The inclusions `EL ⊆ SL ⊆ AL` are theorems
+  `IsElementaryLieObject.isSubexponentiallyAmenable` and
+  `IsSubexponentiallyAmenableLieObject.isAmenable`.  Its
+  positive-characteristic self-similar example is the single
   explicitly permitted incomplete proof,
   `exists_psz_subexponential_not_elementary`.
 - `exists_amenable_exponentialGrowth_locallyFiniteByOne` packages
   the explicit profile-matrix exponential-growth example (Theorem I).
-- `isAmenable_associatedGraded` proves filtered-to-graded amenability from
-  the concrete augmentation filtration and its induced associated-graded
-  realization data (Theorem J).  `TensorFiltrationIntersection.lean`
-  contains the nonseparated tensor-intersection and coideal argument.
+- `isAmenable_associatedGraded` proves filtered-to-graded amenability for
+  the concrete augmentation-associated graded, with no realization-data
+  assumption (Theorem J).  `TensorFiltrationIntersection.lean` contains the
+  nonseparated tensor-intersection and coideal argument;
+  `FilteredInitial.lean` and `AugmentationAssociatedGraded.lean` construct
+  homogeneous lifts and dimension-preserving initial subspaces.
 
 The supporting files `GroupPermanence.lean` and
 `GroupCleftExactSequence.lean` derive subgroup and normal-extension
